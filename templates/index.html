@@ -6,20 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pensionary Benefits Calculator</title>
 
-  <!-- Fonts -->
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
     rel="stylesheet" />
-
-  <!-- Flatpickr (date picker) - locally hosted for 100% offline & reliable loading -->
-  <link rel="stylesheet" href="/static/flatpickr.min.css" />
-  <script src="/static/flatpickr.min.js"></script>
 
   <style>
     /* ════════════════════════════════
-     RESET & BASE
-  ════════════════════════════════ */
+       RESET & BASE
+    ════════════════════════════════ */
     *,
     *::before,
     *::after {
@@ -72,26 +68,27 @@
     }
 
     /* ════════════════════════════════
-     PAGE HEADER
-  ════════════════════════════════ */
+       PAGE HEADER
+    ════════════════════════════════ */
     .page-header {
       background: var(--navy);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
 
     .page-header-inner {
       max-width: 1020px;
       margin: 0 auto;
-      padding: 22px 28px;
+      padding: 18px 24px;
       display: flex;
       align-items: center;
-      gap: 18px;
+      gap: 16px;
     }
 
     .header-emblem {
-      width: 48px;
-      height: 48px;
+      width: 44px;
+      height: 44px;
       background: rgba(255, 255, 255, .1);
-      border: 1px solid rgba(255, 255, 255, .15);
+      border: 1px solid rgba(255, 255, 255, .18);
       border-radius: var(--radius);
       display: flex;
       align-items: center;
@@ -100,33 +97,33 @@
     }
 
     .header-emblem svg {
-      width: 24px;
-      height: 24px;
+      width: 22px;
+      height: 22px;
       fill: #fff;
     }
 
     .header-text h1 {
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       font-weight: 700;
       color: #fff;
       letter-spacing: -.2px;
     }
 
     .header-text p {
-      font-size: .8rem;
-      color: rgba(255, 255, 255, .55);
-      margin-top: 2px;
+      font-size: .78rem;
+      color: rgba(255, 255, 255, .6);
+      margin-top: 1px;
     }
 
     .header-live {
       margin-left: auto;
       display: flex;
       align-items: center;
-      gap: 7px;
+      gap: 8px;
       font-size: .72rem;
       font-weight: 600;
-      color: rgba(255, 255, 255, .5);
-      letter-spacing: .6px;
+      color: rgba(255, 255, 255, .6);
+      letter-spacing: .5px;
       text-transform: uppercase;
     }
 
@@ -138,55 +135,126 @@
       animation: pulse 2s infinite;
     }
 
+    .btn-signout {
+      margin-left: 12px;
+      color: rgba(255, 255, 255, 0.75);
+      text-decoration: none;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 5px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 6px;
+      transition: var(--transition);
+      letter-spacing: 0.2px;
+      text-transform: none;
+    }
+
+    .btn-signout:hover {
+      color: #fff;
+      border-color: #fff;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
     @keyframes pulse {
 
       0%,
       100% {
-        opacity: 1
+        opacity: 1;
       }
 
       50% {
-        opacity: .35
+        opacity: .35;
       }
     }
 
     /* ════════════════════════════════
-     LAYOUT
-  ════════════════════════════════ */
+       LAYOUT
+    ════════════════════════════════ */
     .page-body {
       max-width: 1020px;
-      margin: 28px auto 60px;
+      margin: 24px auto 60px;
       padding: 0 20px;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 16px;
     }
 
     /* ════════════════════════════════
-     INFO BAR
-  ════════════════════════════════ */
+       INFO BAR
+    ════════════════════════════════ */
     .info-bar {
       background: var(--blue-soft);
       border: 1px solid #bfdbfe;
       border-radius: var(--radius);
-      padding: 11px 16px;
+      padding: 10px 16px;
       display: flex;
       align-items: center;
-      gap: 9px;
+      gap: 10px;
       font-size: .82rem;
       color: #1e40af;
     }
 
     .info-bar svg {
-      width: 15px;
-      height: 15px;
+      width: 16px;
+      height: 16px;
       flex-shrink: 0;
       fill: #3b82f6;
     }
 
+    .heading-main1 {
+      color: white
+    }
+
     /* ════════════════════════════════
-     CARD
-  ════════════════════════════════ */
+       PROGRESS
+    ════════════════════════════════ */
+    .progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--white);
+      padding: 10px 16px;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .progress-label {
+      font-size: .78rem;
+      font-weight: 600;
+      color: var(--gray-500);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      white-space: nowrap;
+    }
+
+    .progress-track {
+      flex: 1;
+      height: 7px;
+      background: var(--gray-100);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #3b82f6, #10b981);
+      border-radius: 99px;
+      transition: width .3s ease;
+    }
+
+    .progress-pct {
+      font-size: .78rem;
+      font-weight: 700;
+      color: var(--gray-700);
+      font-family: 'JetBrains Mono', monospace;
+      min-width: 34px;
+      text-align: right;
+    }
+
+    /* ════════════════════════════════
+       CARD & BENEFITS TABLE (3 Columns)
+    ════════════════════════════════ */
     .card {
       background: var(--white);
       border: 1px solid var(--gray-200);
@@ -195,122 +263,27 @@
       overflow: hidden;
     }
 
-    /* ── Pensioner Profile Strip ── */
-    .profile-strip {
-      padding: 14px 24px;
-      background: var(--gray-50);
-      border-bottom: 1px solid var(--gray-200);
-      display: flex;
-      align-items: center;
-    }
-
-    .profile-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .profile-table td {
-      padding: 0;
-      border: none;
-      vertical-align: middle;
-    }
-
-    .profile-strip-label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: .88rem;
-      font-weight: 600;
-      color: var(--gray-900);
-      letter-spacing: normal;
-      text-transform: none;
-      white-space: nowrap;
-      padding-right: 18px;
-    }
-
-    .profile-strip-label svg {
-      width: 17px;
-      height: 17px;
-      stroke: var(--gray-500);
-      fill: none;
-      stroke-width: 2;
-    }
-
-    .name-input-wrap {
-      width: 100%;
-      position: relative;
-    }
-
-    .name-input-wrap input#pensioner_name {
-      width: 100% !important;
-      padding: 9px 12px 9px 38px !important;
-      border: 1.5px solid var(--gray-200);
-      border-radius: var(--radius-sm);
-      font-size: .88rem;
-      font-weight: 500;
-      color: var(--gray-900);
-      font-family: 'Inter', sans-serif !important;
-      background: var(--white);
-      transition: var(--transition);
-      outline: none;
-    }
-
-    .name-input-wrap input::placeholder {
-      color: var(--gray-400);
-      font-weight: 400;
-      font-size: .85rem;
-    }
-
-    .name-input-wrap input:hover {
-      border-color: var(--gray-300);
-    }
-
-    .name-input-wrap input:focus {
-      border-color: var(--blue);
-      box-shadow: 0 0 0 3px rgba(29, 78, 216, .1);
-    }
-
-    .name-input-icon {
-      position: absolute;
-      left: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 16px;
-      height: 16px;
-      stroke: var(--gray-400);
-      fill: none;
-      stroke-width: 2;
-      pointer-events: none;
-    }
-
-    .print-name {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--gray-900);
-      display: none;
-    }
-
-    /* ── Card Title Bar ── */
     .card-title-bar {
-      padding: 14px 24px;
+      padding: 14px 20px;
       border-bottom: 1px solid var(--gray-200);
+      background: var(--white);
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
     .card-title-bar svg {
-      width: 17px;
-      height: 17px;
-      stroke: var(--gray-500);
+      width: 18px;
+      height: 18px;
+      stroke: var(--navy);
       fill: none;
       stroke-width: 1.8;
     }
 
     .card-title-bar span {
-      font-size: .88rem;
-      font-weight: 600;
-      color: var(--gray-700);
+      font-size: .92rem;
+      font-weight: 700;
+      color: var(--gray-900);
     }
 
     .pill {
@@ -318,7 +291,7 @@
       background: var(--gray-100);
       border: 1px solid var(--gray-200);
       border-radius: 20px;
-      padding: 3px 11px;
+      padding: 3px 10px;
       font-size: .7rem;
       font-weight: 600;
       color: var(--gray-500);
@@ -326,24 +299,23 @@
       text-transform: uppercase;
     }
 
-    /* ════════════════════════════════
-     TABLE
-  ════════════════════════════════ */
+    /* ── Strictly Fixed 3-Column Table ── */
     .benefits-table {
       width: 100%;
       border-collapse: collapse;
+      table-layout: fixed;
     }
 
     .col-sl {
-      width: 62px;
+      width: 64px;
+    }
+
+    .col-part {
+      width: auto;
     }
 
     .col-val {
-      width: 290px;
-    }
-
-    .col-type {
-      width: 100px;
+      width: 320px;
     }
 
     .benefits-table thead tr {
@@ -352,9 +324,9 @@
     }
 
     .benefits-table thead th {
-      padding: 10px 18px;
-      font-size: .71rem;
-      font-weight: 600;
+      padding: 11px 18px;
+      font-size: .72rem;
+      font-weight: 700;
       letter-spacing: .6px;
       text-transform: uppercase;
       color: var(--gray-500);
@@ -365,43 +337,86 @@
       text-align: center;
     }
 
-    .benefits-table thead th.col-type {
-      text-align: center;
-    }
-
     .benefits-table tbody tr {
       border-bottom: 1px solid var(--gray-100);
       transition: background .12s;
     }
 
-    .benefits-table tbody tr:last-child {
-      border-bottom: none;
-    }
-
     .benefits-table tbody tr:hover {
-      background: var(--gray-50);
+      background: #fafbfc;
     }
 
-    /* Section separator */
+    .benefits-table td {
+      padding: 12px 18px;
+      vertical-align: middle;
+      font-size: .9rem;
+    }
+
+    /* ── Profile Row Highlight ── */
+    .profile-row {
+      background: #f8fafc;
+      border-bottom: 2px solid var(--gray-200) !important;
+    }
+
+    .avatar-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      background: var(--blue-soft) !important;
+      color: var(--blue) !important;
+      border: 1.5px solid #bfdbfe !important;
+      border-radius: 8px !important;
+    }
+
+    .pensioner-name-input {
+      width: 100%;
+      padding: 9px 13px;
+      border: 1.5px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      font-size: .9rem;
+      font-weight: 600;
+      font-family: 'Inter', system-ui, sans-serif;
+      color: var(--gray-900);
+      background: var(--white);
+      outline: none;
+      transition: var(--transition);
+      box-sizing: border-box;
+    }
+
+    .pensioner-name-input:hover {
+      border-color: var(--gray-300);
+    }
+
+    .pensioner-name-input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(29, 78, 216, .12);
+    }
+
+    /* Print-Only Values (Hidden on screen) */
+    .print-val {
+      display: none;
+    }
+
+    .print-header {
+      display: none;
+    }
+
+    /* Section separators */
     .section-row td {
       padding: 6px 18px;
       background: var(--gray-50);
       border-top: 1px solid var(--gray-200);
       border-bottom: 1px solid var(--gray-200);
       font-size: .7rem;
-      font-weight: 600;
+      font-weight: 700;
       letter-spacing: .7px;
       text-transform: uppercase;
-      color: var(--gray-400);
+      color: var(--gray-500);
     }
 
-    .benefits-table td {
-      padding: 13px 18px;
-      vertical-align: middle;
-      font-size: .9rem;
-    }
-
-    /* Sl number */
+    /* Sl number cell */
     .sl {
       text-align: center;
     }
@@ -414,13 +429,13 @@
       height: 28px;
       background: var(--gray-100);
       border-radius: 6px;
-      font-size: .74rem;
+      font-size: .75rem;
       font-weight: 700;
       color: var(--gray-500);
       font-family: 'JetBrains Mono', monospace;
     }
 
-    /* Particulars */
+    /* Particulars cell */
     .part-title {
       font-weight: 600;
       color: var(--gray-900);
@@ -439,48 +454,20 @@
       color: var(--gray-500);
     }
 
-    /* Type badge */
-    .type-cell {
-      text-align: center;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 3px 9px;
-      border-radius: 20px;
-      font-size: .68rem;
-      font-weight: 600;
-      letter-spacing: .3px;
-      white-space: nowrap;
-    }
-
-    .badge-manual {
-      background: var(--blue-soft);
-      color: #1d4ed8;
-      border: 1px solid #bfdbfe;
-    }
-
-    .badge-formula {
-      background: var(--amber-soft);
-      color: var(--amber);
-      border: 1px solid var(--amber-border);
-    }
-
     /* ════════════════════════════════
-     INPUTS (Manual Entry)
-  ════════════════════════════════ */
+       FORM INPUTS (Manual Entry)
+    ════════════════════════════════ */
     .field-wrap {
       position: relative;
       display: flex;
       align-items: center;
+      width: 100%;
     }
 
     .field-prefix,
     .field-suffix {
       position: absolute;
-      font-size: .8rem;
+      font-size: .82rem;
       color: var(--gray-400);
       pointer-events: none;
       font-family: 'JetBrains Mono', monospace;
@@ -494,8 +481,8 @@
       right: 10px;
     }
 
-    input[type="text"],
-    input[type="number"] {
+    input[type="number"],
+    input[type="text"] {
       width: 100%;
       padding: 9px 12px;
       border: 1.5px solid var(--gray-200);
@@ -507,6 +494,7 @@
       transition: var(--transition);
       outline: none;
       appearance: textfield;
+      box-sizing: border-box;
     }
 
     input[type="number"]::-webkit-inner-spin-button,
@@ -515,11 +503,11 @@
     }
 
     input.with-prefix {
-      padding-left: 26px;
+      padding-left: 26px !important;
     }
 
     input.with-suffix {
-      padding-right: 26px;
+      padding-right: 32px !important;
     }
 
     input:hover {
@@ -528,7 +516,7 @@
 
     input:focus {
       border-color: var(--blue);
-      box-shadow: 0 0 0 3px rgba(29, 78, 216, .1);
+      box-shadow: 0 0 0 3px rgba(29, 78, 216, .12);
     }
 
     input.valid {
@@ -540,401 +528,124 @@
       background: var(--red-soft);
     }
 
-    /* ── Date Picker Wrapper ── */
-    .date-input-wrap {
-      position: relative;
-    }
-
-    .date-input-wrap .cal-icon {
-      position: absolute;
-      left: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 16px;
-      height: 16px;
-      stroke: var(--gray-400);
-      fill: none;
-      stroke-width: 2;
-      pointer-events: none;
-      z-index: 2;
-    }
-
-    /* ── Force flatpickr input text to always be visible ── */
-    .date-input-wrap input.flatpickr-input,
-    .date-input-wrap input.flatpickr-input:read-only,
-    .date-input-wrap input.flatpickr-input[readonly],
-    .flatpickr-input,
-    .flatpickr-input:read-only,
-    .flatpickr-input[readonly] {
-      padding-left: 34px !important;
-      cursor: pointer !important;
-      font-family: 'JetBrains Mono', monospace !important;
-      font-size: .88rem !important;
-      color: var(--gray-900) !important;
-      background: var(--white) !important;
-      border: 1.5px solid var(--gray-200) !important;
-      border-radius: var(--radius-sm) !important;
-      -webkit-text-fill-color: var(--gray-900) !important;
-      /* Safari / WebKit fix */
-      opacity: 1 !important;
-      /* Firefox fix */
-    }
-
-    .date-input-wrap input.flatpickr-input:hover,
-    .date-input-wrap input.flatpickr-input[readonly]:hover {
-      border-color: var(--gray-300) !important;
-    }
-
-    .date-input-wrap input.flatpickr-input:focus,
-    .date-input-wrap input.flatpickr-input.active,
-    .flatpickr-input.active {
-      border-color: var(--blue) !important;
-      box-shadow: 0 0 0 3px rgba(29, 78, 216, .1) !important;
-      outline: none !important;
-    }
-
-    /* Placeholder color */
-    .date-input-wrap input.flatpickr-input::placeholder {
-      color: var(--gray-400) !important;
-      -webkit-text-fill-color: var(--gray-400) !important;
-      font-family: 'Inter', sans-serif !important;
-      font-size: .85rem !important;
-    }
-
-    /* When date is filled — show valid state */
-    .date-input-wrap input.flatpickr-input.valid {
-      border-color: var(--green-border) !important;
-      background: var(--green-soft) !important;
-      color: var(--green) !important;
-      -webkit-text-fill-color: var(--green) !important;
-    }
-
     /* ════════════════════════════════
-     FLATPICKR CALENDAR THEME
-  ════════════════════════════════ */
-    .flatpickr-calendar {
-      z-index: 99999 !important;
-      border: 1px solid var(--gray-200) !important;
-      border-radius: var(--radius-lg) !important;
-      box-shadow: var(--shadow-lg) !important;
-      font-family: 'Inter', sans-serif !important;
-      padding: 8px !important;
-      background: var(--white) !important;
-    }
-
-    /* Month header — navy */
-    .flatpickr-months {
-      background: var(--navy) !important;
-      border-radius: 8px 8px 0 0 !important;
-      padding: 8px 6px !important;
-    }
-
-    .flatpickr-month {
-      color: #fff !important;
-      fill: #fff !important;
-      height: 36px !important;
-    }
-
-    .flatpickr-current-month {
-      font-size: .95rem !important;
-      font-weight: 600 !important;
-      color: #fff !important;
-      padding: 4px 0 !important;
-    }
-
-    .flatpickr-current-month .numInputWrapper input,
-    .flatpickr-current-month .numInputWrapper input:focus {
-      color: #fff !important;
-      -webkit-text-fill-color: #fff !important;
-      font-family: 'JetBrains Mono', monospace !important;
-      background: transparent !important;
-      border: none !important;
-      box-shadow: none !important;
-      font-size: .95rem !important;
-      font-weight: 600 !important;
-    }
-
-    .flatpickr-current-month select.flatpickr-monthDropdown-months {
-      color: #fff !important;
-      -webkit-text-fill-color: #fff !important;
-      font-weight: 600 !important;
-      background: transparent !important;
-      font-size: .92rem !important;
-      border: none !important;
-    }
-
-    .flatpickr-current-month select.flatpickr-monthDropdown-months option {
-      color: var(--gray-900) !important;
-      background: var(--white) !important;
-    }
-
-    /* Prev / Next arrows */
-    .flatpickr-months .flatpickr-prev-month,
-    .flatpickr-months .flatpickr-next-month {
-      color: rgba(255, 255, 255, .85) !important;
-      fill: rgba(255, 255, 255, .85) !important;
-      padding: 8px 10px !important;
-      top: 6px !important;
-    }
-
-    .flatpickr-months .flatpickr-prev-month:hover svg,
-    .flatpickr-months .flatpickr-next-month:hover svg {
-      fill: #fff !important;
-    }
-
-    .flatpickr-months .flatpickr-prev-month:hover,
-    .flatpickr-months .flatpickr-next-month:hover {
-      background: rgba(255, 255, 255, .12) !important;
-      border-radius: 6px !important;
-    }
-
-    /* Weekday row */
-    .flatpickr-weekdays {
-      background: var(--gray-50) !important;
-      border-bottom: 1px solid var(--gray-100) !important;
-      padding: 4px 0 !important;
-    }
-
-    .flatpickr-weekday {
-      color: var(--gray-500) !important;
-      font-weight: 600 !important;
-      font-size: .72rem !important;
-      letter-spacing: .5px !important;
-      font-family: 'Inter', sans-serif !important;
-      background: transparent !important;
-    }
-
-    /* Days */
-    .flatpickr-days {
-      border: none !important;
-    }
-
-    .dayContainer {
-      padding: 4px 0 !important;
-    }
-
-    .flatpickr-day {
-      border-radius: var(--radius-sm) !important;
-      font-size: .83rem !important;
-      color: var(--gray-700) !important;
-      -webkit-text-fill-color: var(--gray-700) !important;
-      font-family: 'Inter', sans-serif !important;
-      height: 33px !important;
-      line-height: 33px !important;
-      max-width: 33px !important;
-      border: 1px solid transparent !important;
-      margin: 1px !important;
-    }
-
-    .flatpickr-day:hover:not(.selected):not(.today):not(.flatpickr-disabled) {
-      background: var(--blue-soft) !important;
-      border-color: #bfdbfe !important;
-      color: var(--blue) !important;
-      -webkit-text-fill-color: var(--blue) !important;
-    }
-
-    /* Today */
-    .flatpickr-day.today:not(.selected) {
-      border-color: var(--blue) !important;
-      color: var(--blue) !important;
-      -webkit-text-fill-color: var(--blue) !important;
-      font-weight: 700 !important;
-      background: var(--white) !important;
-    }
-
-    /* Selected day */
-    .flatpickr-day.selected,
-    .flatpickr-day.selected:hover,
-    .flatpickr-day.startRange,
-    .flatpickr-day.endRange {
-      background: var(--navy) !important;
-      border-color: var(--navy) !important;
-      color: #fff !important;
-      -webkit-text-fill-color: #fff !important;
-      font-weight: 700 !important;
-      box-shadow: 0 2px 8px rgba(15, 37, 69, .35) !important;
-    }
-
-    /* Disabled / out-of-range days */
-    .flatpickr-day.flatpickr-disabled,
-    .flatpickr-day.flatpickr-disabled:hover,
-    .flatpickr-day.prevMonthDay,
-    .flatpickr-day.nextMonthDay {
-      color: var(--gray-300) !important;
-      -webkit-text-fill-color: var(--gray-300) !important;
-      background: transparent !important;
-      border-color: transparent !important;
-    }
-
-    /* Year input arrows */
-    .numInputWrapper {
-      position: relative;
-    }
-
-    .numInputWrapper span.arrowUp,
-    .numInputWrapper span.arrowDown {
-      border-color: rgba(255, 255, 255, .25) !important;
-      opacity: 1 !important;
-    }
-
-    .numInputWrapper span.arrowUp:after {
-      border-bottom-color: rgba(255, 255, 255, .75) !important;
-    }
-
-    .numInputWrapper span.arrowDown:after {
-      border-top-color: rgba(255, 255, 255, .75) !important;
-    }
-
-    /* ════════════════════════════════
-     FORMULA OUTPUT
-  ════════════════════════════════ */
-    .formula-cell {
+       NATIVE HTML5 DATE INPUT
+    ════════════════════════════════ */
+    .native-date-input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1.5px solid var(--gray-200);
       border-radius: var(--radius-sm);
-      padding: 9px 13px;
+      font-size: .88rem;
       font-family: 'JetBrains Mono', monospace;
-      font-size: .85rem;
-      font-weight: 500;
-      min-height: 40px;
+      color: var(--gray-900);
+      background: var(--white);
+      outline: none;
+      cursor: pointer;
+      transition: var(--transition);
+      box-sizing: border-box;
+    }
+
+    .native-date-input:hover {
+      border-color: var(--gray-300);
+    }
+
+    .native-date-input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(29, 78, 216, .12);
+    }
+
+    .native-date-input.valid {
+      border-color: var(--green-border);
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .native-date-input::-webkit-calendar-picker-indicator {
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      opacity: 0.75;
+      transition: opacity .15s ease, background-color .15s ease;
+    }
+
+    .native-date-input::-webkit-calendar-picker-indicator:hover {
+      opacity: 1;
+      background-color: var(--gray-100);
+    }
+
+    /* ════════════════════════════════
+       FORMULA CELLS (Output)
+    ════════════════════════════════ */
+    .formula-cell {
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      font-size: .88rem;
+      font-family: 'JetBrains Mono', monospace;
+      border: 1.5px solid transparent;
+      transition: var(--transition);
+      word-break: break-word;
+      min-height: 38px;
       display: flex;
       align-items: center;
-      transition: var(--transition);
+      box-sizing: border-box;
     }
 
     .formula-cell.empty {
       background: var(--gray-50);
-      border: 1.5px dashed var(--gray-200);
+      border-color: var(--gray-200);
       color: var(--gray-400);
-      font-style: italic;
+      font-size: .78rem;
       font-family: 'Inter', sans-serif;
-      font-size: .79rem;
-      font-weight: 400;
-    }
-
-    .formula-cell.filled {
-      background: var(--green-soft);
-      border: 1.5px solid var(--green-border);
-      color: var(--green);
-      font-weight: 600;
-      animation: pop .22s ease;
+      font-style: italic;
     }
 
     .formula-cell.partial {
       background: var(--amber-soft);
-      border: 1.5px dashed var(--amber-border);
+      border-color: var(--amber-border);
       color: var(--amber);
-      font-family: 'Inter', sans-serif;
       font-size: .78rem;
-      font-weight: 400;
-      font-style: italic;
+      font-family: 'Inter', sans-serif;
     }
 
-    @keyframes pop {
-      0% {
-        transform: scale(.97);
-        opacity: .7;
-      }
-
-      60% {
-        transform: scale(1.01);
-      }
-
-      100% {
-        transform: scale(1);
-        opacity: 1;
-      }
+    .formula-cell.filled {
+      background: var(--green-soft);
+      border-color: var(--green-border);
+      color: var(--green);
+      font-weight: 600;
     }
 
-    /* Family pension two rows */
+    /* Family pension sub-outputs */
     .family-outputs {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
 
     .family-output-item {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 2px;
     }
 
     .family-label {
-      font-size: .71rem;
+      font-size: .7rem;
       font-weight: 600;
       color: var(--gray-500);
-      letter-spacing: .3px;
       text-transform: uppercase;
-    }
-
-    /* Total row inside Row-12 gets a top separator */
-    .family-output-item.total-row {
-      margin-top: 4px;
-      padding-top: 10px;
-      border-top: 1.5px solid var(--gray-200);
-    }
-
-    .family-output-item.total-row .formula-cell.filled {
-      background: #eef2ff;
-      border-color: #a5b4fc;
-      color: var(--navy);
-      font-size: .92rem;
+      letter-spacing: .4px;
     }
 
     /* ════════════════════════════════
-     PROGRESS BAR
-  ════════════════════════════════ */
-    .progress-wrap {
-      background: var(--white);
-      border: 1px solid var(--gray-200);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-sm);
-      padding: 14px 22px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .progress-label {
-      font-size: .78rem;
-      font-weight: 600;
-      color: var(--gray-500);
-      white-space: nowrap;
-    }
-
-    .progress-track {
-      flex: 1;
-      height: 6px;
-      background: var(--gray-100);
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--blue), var(--green));
-      border-radius: 10px;
-      transition: width .4s ease;
-    }
-
-    .progress-pct {
-      font-size: .78rem;
-      font-weight: 700;
-      color: var(--gray-700);
-      min-width: 32px;
-      text-align: right;
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    /* ════════════════════════════════
-     ACTION BAR
-  ════════════════════════════════ */
+       ACTION BAR
+    ════════════════════════════════ */
     .action-bar {
-      padding: 14px 22px;
-      border-top: 1px solid var(--gray-100);
+      padding: 14px 20px;
       background: var(--gray-50);
+      border-top: 1px solid var(--gray-200);
       display: flex;
       align-items: center;
       gap: 10px;
-      flex-wrap: wrap;
     }
 
     .btn {
@@ -952,24 +663,12 @@
     }
 
     .btn svg {
-      width: 14px;
-      height: 14px;
+      width: 15px;
+      height: 15px;
       stroke: currentColor;
       fill: none;
       stroke-width: 2;
       flex-shrink: 0;
-    }
-
-    .btn-primary {
-      background: var(--navy);
-      color: var(--white);
-      box-shadow: var(--shadow-sm);
-    }
-
-    .btn-primary:hover {
-      background: var(--navy-mid);
-      box-shadow: var(--shadow);
-      transform: translateY(-1px);
     }
 
     .btn-ghost {
@@ -985,19 +684,20 @@
 
     .btn-print {
       margin-left: auto;
-      background: var(--white);
-      color: var(--gray-600);
-      border: 1.5px solid var(--gray-200);
+      background: var(--navy);
+      color: var(--white);
+      box-shadow: var(--shadow-sm);
     }
 
     .btn-print:hover {
-      border-color: var(--navy);
-      color: var(--navy);
+      background: var(--navy-mid);
+      box-shadow: var(--shadow);
+      transform: translateY(-1px);
     }
 
     /* ════════════════════════════════
-     TOAST
-  ════════════════════════════════ */
+       TOAST
+    ════════════════════════════════ */
     #toast {
       position: fixed;
       bottom: 28px;
@@ -1035,9 +735,6 @@
       fill: currentColor;
     }
 
-    /* ════════════════════════════════
-     FOOTER
-  ════════════════════════════════ */
     .page-footer {
       text-align: center;
       padding: 16px;
@@ -1046,65 +743,11 @@
     }
 
     /* ════════════════════════════════
-     PRINT
-  ════════════════════════════════ */
-    @media print {
-      body {
-        background: #fff;
-      }
-
-      .page-header {
-        background: #fff !important;
-        border-bottom: 2px solid #000;
-      }
-
-      .page-header-inner h1 {
-        color: #000 !important;
-      }
-
-      .page-header-inner p,
-      .header-live,
-      .info-bar,
-      .progress-wrap,
-      .action-bar,
-      .page-footer,
-      #toast {
-        display: none !important;
-      }
-
-      .card {
-        box-shadow: none;
-        border: 1px solid #ccc;
-      }
-
-      .formula-cell.filled {
-        background: #e8f5e9 !important;
-        border-color: #a5d6a7 !important;
-      }
-
-      .name-input-wrap input {
-        display: none;
-      }
-
-      .print-name {
-        display: block !important;
-      }
-
-      .page-body {
-        margin: 10px auto;
-      }
-    }
-
-    /* ════════════════════════════════
-     RESPONSIVE
-  ════════════════════════════════ */
+       RESPONSIVE
+    ════════════════════════════════ */
     @media (max-width: 680px) {
       .page-header-inner {
-        padding: 16px;
-      }
-
-      .page-header-inner h1 {
-        font-size: 1rem;
+        padding: 14px 16px;
       }
 
       .header-live {
@@ -1116,25 +759,228 @@
         margin: 16px auto 40px;
       }
 
-      .col-type,
-      .benefits-table thead th.col-type {
-        display: none;
-      }
-
       .col-val {
         width: auto;
       }
+    }
 
-      .profile-strip {
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-        padding: 16px;
+    /* ════════════════════════════════
+       PRINT / EXPORT PDF VIEW (OFFICIAL SANCTION FORMAT)
+       Shows necessary information only:
+       - No inputs, no button bars, no web nav, no developer formula hints
+       - Clean crisp lines, formal document header, metadata & verification signatures
+    ════════════════════════════════ */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 10mm 14mm 12mm 14mm;
       }
 
-      .profile-strip-label {
-        padding-right: 0;
+      body {
+        background: #fff !important;
+        color: #000 !important;
+        font-size: 10pt !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      /* Hide web interactive elements */
+      .page-header,
+      .info-bar,
+      .progress-wrap,
+      .card-title-bar,
+      .action-bar,
+      .page-footer,
+      #toast {
+        display: none !important;
+      }
+
+      /* Hide input controls & prefixes/suffixes */
+      input,
+      .field-wrap,
+      .field-prefix,
+      .field-suffix {
+        display: none !important;
+      }
+
+      /* Hide developer formulas / row cross-references to show ONLY necessary info */
+      .part-hint {
+        display: none !important;
+      }
+
+      /* Card becomes borderless container for print */
+      .card {
+        border: none !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+      }
+
+      .page-body {
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      /* Show Official Document Header */
+      .print-header {
+        display: block !important;
+        margin-bottom: 12px;
+        border-bottom: 2px solid #111827;
+        padding-bottom: 10px;
+      }
+
+      .print-header-top {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .print-emblem svg {
+        width: 34px;
+        height: 34px;
+        fill: #111827;
+      }
+
+      .print-header-title h2 {
+        font-size: 15pt;
+        font-weight: 800;
+        color: #111827;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin: 0;
+      }
+
+      .print-header-title p {
+        font-size: 8.5pt;
+        color: #4b5563;
+        margin-top: 1px;
+      }
+
+      .print-meta-grid {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 8px;
+        padding-top: 6px;
+        border-top: 1px dashed #9ca3af;
+        font-size: 8.5pt;
+        color: #1f2937;
+      }
+
+      .print-meta-grid strong {
+        color: #111827;
+      }
+
+      /* Official Benefits Table for Print */
+      .benefits-table {
+        width: 100% !important;
+        table-layout: fixed !important;
+        border-collapse: collapse !important;
+        border: 1.5px solid #1f2937 !important;
+      }
+
+      .benefits-table thead tr {
+        background: #f3f4f6 !important;
+        border-bottom: 1.5px solid #1f2937 !important;
+      }
+
+      .benefits-table thead th {
+        color: #111827 !important;
+        font-size: 8pt !important;
+        font-weight: 700 !important;
+        padding: 6px 10px !important;
+        border-right: 1px solid #d1d5db !important;
+        text-transform: uppercase;
+      }
+
+      .benefits-table thead th:last-child {
+        border-right: none !important;
+      }
+
+      .benefits-table td {
+        padding: 5px 10px !important;
+        border-bottom: 1px solid #e5e7eb !important;
+        border-right: 1px solid #e5e7eb !important;
+        font-size: 8.5pt !important;
+      }
+
+      .benefits-table td:last-child {
+        border-right: none !important;
+      }
+
+      .profile-row {
+        background: #f9fafb !important;
+        border-bottom: 1.5px solid #9ca3af !important;
+      }
+
+      .avatar-badge {
+        display: none !important;
+      }
+
+      .section-row td {
+        background: #f3f4f6 !important;
+        color: #111827 !important;
+        font-weight: 700 !important;
+        font-size: 7.5pt !important;
+        padding: 4px 10px !important;
+        border-top: 1.5px solid #d1d5db !important;
+        border-bottom: 1.5px solid #d1d5db !important;
+        letter-spacing: 0.5px;
+      }
+
+      .sl-num {
+        background: transparent !important;
+        color: #111827 !important;
+        font-weight: 700 !important;
+        font-size: 8pt !important;
+        width: auto !important;
+        height: auto !important;
+      }
+
+      .part-title {
+        font-size: 8.5pt !important;
+        font-weight: 600 !important;
+        color: #111827 !important;
+      }
+
+      /* Clean Document Text for Print Values */
+      .print-val {
+        display: block !important;
+        font-size: 9pt !important;
+        font-weight: 700 !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        color: #000 !important;
+      }
+
+      .formula-cell {
+        padding: 0 !important;
+        min-height: auto !important;
+        border: none !important;
+        background: transparent !important;
+        font-size: 9pt !important;
+        font-weight: 700 !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        color: #000 !important;
+      }
+
+      .formula-cell.empty {
+        font-style: normal !important;
+        color: #9ca3af !important;
+        font-weight: 400 !important;
+      }
+
+      .family-outputs {
+        gap: 3px !important;
+      }
+
+      .family-label {
+        font-size: 7pt !important;
+        color: #4b5563 !important;
+      }
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
       }
     }
   </style>
@@ -1142,7 +988,7 @@
 
 <body>
 
-  <!-- ══════════════ PAGE HEADER ══════════════ -->
+  <!-- ══════════════ PAGE HEADER (SCREEN VIEW) ══════════════ -->
   <header class="page-header">
     <div class="page-header-inner">
       <div class="header-emblem">
@@ -1150,14 +996,11 @@
           <path d="M3 22V10l9-7 9 7v12H3zm4-2h3v-5h4v5h3v-9.5l-5-3.9-5 3.9V20z" />
         </svg>
       </div>
-      <div class="header-text">
-        <h1>Pensionary Benefits Calculator</h1>
-        <!-- <p>Government Pension &amp; Retirement Benefit Computation System</p> -->
-      </div>
+      <p class="heading-main1">Pensionary Benefits Calculator</p>
       <div class="header-live">
         <div class="live-dot"></div>
-        Live Calculation
-        <a href="/logout" style="margin-left: 14px; color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.72rem; padding: 4px 10px; border: 1px solid rgba(255,255,255,0.25); border-radius: 6px; transition: all 0.2s;" onmouseover="this.style.color='#fff'; this.style.borderColor='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.borderColor='rgba(255,255,255,0.25)'">Sign Out</a>
+
+        <a href="/logout" class="btn-signout" title="Sign Out">Sign Out</a>
       </div>
     </div>
   </header>
@@ -1165,16 +1008,29 @@
   <!-- ══════════════ PAGE BODY ══════════════ -->
   <div class="page-body">
 
-    <!-- Info Banner -->
-    <!-- <div class="info-bar">
-      <svg viewBox="0 0 24 24">
-        <path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
-      </svg>
-      Results update automatically as you fill in the fields — no Calculate button needed.
-      &nbsp;<strong>Manual</strong> fields require your input; <strong>Formula</strong> fields compute instantly.
-    </div> -->
+    <!-- Official Document Header (Visible Only in Print / PDF Export) -->
+    <div class="print-header">
+      <div class="print-header-top">
+        <div class="print-emblem">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 22V10l9-7 9 7v12H3zm4-2h3v-5h4v5h3v-9.5l-5-3.9-5 3.9V20z" />
+          </svg>
+        </div>
+        <div class="print-header-title">
+          <h2>PENSIONARY BENEFITS STATEMENT</h2>
+          <p>Government Pension &amp; Retirement Benefits Computation</p>
+        </div>
+      </div>
+      <div class="print-meta-grid">
+        <div><strong>Pensioner Name:</strong> <span id="printMetaName">—</span></div>
+        <div><strong>Date of Generation:</strong> <span id="printMetaDate">—</span></div>
+        <div><strong>Status:</strong> Official Statement</div>
+      </div>
+    </div>
 
-    <!-- Progress -->
+
+
+    <!-- Progress (Screen Only) -->
     <div class="progress-wrap">
       <span class="progress-label">Fields Completed</span>
       <div class="progress-track">
@@ -1186,41 +1042,9 @@
     <!-- Main Card -->
     <div class="card">
 
-      <!-- ── Pensioner Name Strip ── -->
-      <div class="profile-strip">
-        <table class="profile-table">
-          <tr>
-            <td style="width: 62px;"></td>
-            <td>
-              <div class="profile-strip-label">
-                <svg viewBox="0 0 24 24">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                  <circle cx="12" cy="7" r="4" />
-                </svg>
-                Pensioner Name
-              </div>
-            </td>
-            <td style="width: 290px;">
-              <div class="name-input-wrap">
-                <!-- person icon inside input -->
-                <svg class="name-input-icon" viewBox="0 0 24 24">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                  <circle cx="12" cy="7" r="4" />
-                </svg>
-                <input type="text" id="pensioner_name" placeholder="Enter full name of pensioner" oninput="updateProgress()"
-                  autocomplete="off" spellcheck="false" />
-                <!-- Print-only display -->
-                <div class="print-name" id="printName"></div>
-              </div>
-            </td>
-            <td style="width: 100px;"></td>
-          </tr>
-        </table>
-      </div>
-
       <!-- ── Card Title ── -->
       <div class="card-title-bar">
-        <svg viewBox="0 0 24 24" stroke-width="1.8">
+        <svg viewBox="0 0 24 24">
           <rect x="3" y="3" width="18" height="18" rx="2" />
           <line x1="3" y1="9" x2="21" y2="9" />
           <line x1="3" y1="15" x2="21" y2="15" />
@@ -1232,22 +1056,43 @@
       </div>
 
       <!-- ══════════════════════════════════
-         BENEFITS TABLE
-    ══════════════════════════════════ -->
+           BENEFITS TABLE (3 Clean Columns)
+      ══════════════════════════════════ -->
       <table class="benefits-table">
         <thead>
           <tr>
             <th class="col-sl">Sl. No.</th>
-            <th>Particulars</th>
+            <th class="col-part">Particulars</th>
             <th class="col-val">Amount / Date</th>
-            <th class="col-type">Entry Type</th>
           </tr>
         </thead>
         <tbody>
 
+          <!-- ── PENSIONER PROFILE ROW ── -->
+          <tr class="profile-row">
+            <td class="sl">
+              <span class="avatar-badge" title="Pensioner Profile">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </span>
+            </td>
+            <td>
+              <div class="part-title">Pensioner Name</div>
+              <div class="part-hint">Official Retiree / Beneficiary Name</div>
+            </td>
+            <td>
+              <input type="text" id="pensioner_name" class="pensioner-name-input"
+                placeholder="Enter full name of pensioner" oninput="onFieldChange()" autocomplete="off"
+                spellcheck="false" />
+              <div class="print-val" id="print_name">—</div>
+            </td>
+          </tr>
+
           <!-- ── SECTION: Personal Details ── -->
           <tr class="section-row">
-            <td colspan="4">Personal Details</td>
+            <td colspan="3">Personal Details</td>
           </tr>
 
           <!-- 01 Date of Birth -->
@@ -1255,26 +1100,18 @@
             <td class="sl"><span class="sl-num">01</span></td>
             <td>
               <div class="part-title">Date of Birth</div>
+              <div class="part-hint">Beneficiary Birth Date</div>
             </td>
             <td>
-              <div class="date-input-wrap" onclick="fpDOB.open()">
-                <svg class="cal-icon" viewBox="0 0 24 24">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                  <line x1="16" y1="2" x2="16" y2="6" />
-                  <line x1="8" y1="2" x2="8" y2="6" />
-                  <line x1="3" y1="10" x2="21" y2="10" />
-                </svg>
-                <input type="text" id="dob" class="flatpickr-input" placeholder="Select date of birth" readonly />
-              </div>
-            </td>
-            <td class="type-cell">
-              <span class="badge badge-manual">&#9998; Manual</span>
+              <input type="date" id="dob" class="native-date-input" onchange="onFieldChange()" oninput="onFieldChange()"
+                onclick="tryOpenPicker(this)" />
+              <div class="print-val" id="print_dob">—</div>
             </td>
           </tr>
 
           <!-- ── SECTION: Service Details ── -->
           <tr class="section-row">
-            <td colspan="4">Service Details</td>
+            <td colspan="3">Service Details</td>
           </tr>
 
           <!-- 02 Date of Entry into Service -->
@@ -1282,20 +1119,12 @@
             <td class="sl"><span class="sl-num">02</span></td>
             <td>
               <div class="part-title">Date of Entry into Service</div>
+              <div class="part-hint">Government Joining Date</div>
             </td>
             <td>
-              <div class="date-input-wrap" onclick="fpDOJ.open()">
-                <svg class="cal-icon" viewBox="0 0 24 24">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                  <line x1="16" y1="2" x2="16" y2="6" />
-                  <line x1="8" y1="2" x2="8" y2="6" />
-                  <line x1="3" y1="10" x2="21" y2="10" />
-                </svg>
-                <input type="text" id="doj" class="flatpickr-input" placeholder="Select joining date" readonly />
-              </div>
-            </td>
-            <td class="type-cell">
-              <span class="badge badge-manual">&#9998; Manual</span>
+              <input type="date" id="doj" class="native-date-input" onchange="onFieldChange()" oninput="onFieldChange()"
+                onclick="tryOpenPicker(this)" />
+              <div class="print-val" id="print_doj">—</div>
             </td>
           </tr>
 
@@ -1307,18 +1136,9 @@
               <div class="part-hint">Scientist: 62 yrs &nbsp;|&nbsp; Others: 60 yrs</div>
             </td>
             <td>
-              <div class="date-input-wrap" onclick="fpDOR.open()">
-                <svg class="cal-icon" viewBox="0 0 24 24">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                  <line x1="16" y1="2" x2="16" y2="6" />
-                  <line x1="8" y1="2" x2="8" y2="6" />
-                  <line x1="3" y1="10" x2="21" y2="10" />
-                </svg>
-                <input type="text" id="dor" class="flatpickr-input" placeholder="Select retirement date" readonly />
-              </div>
-            </td>
-            <td class="type-cell">
-              <span class="badge badge-manual">&#9998; Manual</span>
+              <input type="date" id="dor" class="native-date-input" onchange="onFieldChange()" oninput="onFieldChange()"
+                onclick="tryOpenPicker(this)" />
+              <div class="print-val" id="print_dor">—</div>
             </td>
           </tr>
 
@@ -1332,9 +1152,6 @@
             <td>
               <div class="formula-cell empty" id="out_service">Awaiting joining &amp; retirement dates</div>
             </td>
-            <td class="type-cell">
-              <span class="badge badge-formula">&#402; Formula</span>
-            </td>
           </tr>
 
           <!-- 05 Total Half Yearly Period -->
@@ -1342,7 +1159,6 @@
             <td class="sl"><span class="sl-num">05</span></td>
             <td>
               <div class="part-title">Total Half Yearly Period</div>
-              <div class="part-hint">Completed 6-month periods in total service</div>
               <div class="part-hint">
                 Completed 6-month periods in total service (Max: 66 periods / 33 yrs)<br />
                 <em>&gt; 3 months = +1 period, &gt; 9 months = +2 periods</em>
@@ -1351,14 +1167,11 @@
             <td>
               <div class="formula-cell empty" id="out_half_yearly">Awaiting joining &amp; retirement dates</div>
             </td>
-            <td class="type-cell">
-              <span class="badge badge-formula">&#402; Formula</span>
-            </td>
           </tr>
 
           <!-- ── SECTION: Pay Details ── -->
           <tr class="section-row">
-            <td colspan="4">Pay Details</td>
+            <td colspan="3">Pay Details</td>
           </tr>
 
           <!-- 06 Basic Pay -->
@@ -1373,9 +1186,7 @@
                 <input type="number" id="basic_pay" class="with-prefix" placeholder="e.g. 218200" min="0" step="100"
                   oninput="onFieldChange()" />
               </div>
-            </td>
-            <td class="type-cell">
-              <span class="badge badge-manual">&#9998; Manual</span>
+              <div class="print-val" id="print_basic_pay">—</div>
             </td>
           </tr>
 
@@ -1392,15 +1203,13 @@
                   oninput="onFieldChange()" />
                 <span class="field-suffix">%</span>
               </div>
-            </td>
-            <td class="type-cell">
-              <span class="badge badge-manual">&#9998; Manual</span>
+              <div class="print-val" id="print_da_rate">—</div>
             </td>
           </tr>
 
           <!-- ── SECTION: Pension Calculations ── -->
           <tr class="section-row">
-            <td colspan="4">Pension Calculations</td>
+            <td colspan="3">Pension Calculations</td>
           </tr>
 
           <!-- 08 Pension Before Commutation -->
@@ -1416,9 +1225,6 @@
             <td>
               <div class="formula-cell empty" id="out_pension_before">Awaiting Basic Pay (Row 06)</div>
             </td>
-            <td class="type-cell">
-              <span class="badge badge-formula">&#402; Formula</span>
-            </td>
           </tr>
 
           <!-- 09 Pension Commutation -->
@@ -1430,9 +1236,6 @@
             </td>
             <td>
               <div class="formula-cell empty" id="out_commutation">Awaiting Basic Pay (Row 06)</div>
-            </td>
-            <td class="type-cell">
-              <span class="badge badge-formula">&#402; Formula</span>
             </td>
           </tr>
 
@@ -1448,9 +1251,6 @@
             </td>
             <td>
               <div class="formula-cell empty" id="out_pension_after">Awaiting Basic Pay (Row 06)</div>
-            </td>
-            <td class="type-cell">
-              <span class="badge badge-formula">&#402; Formula</span>
             </td>
           </tr>
 
@@ -1476,14 +1276,11 @@
                 </div>
               </div>
             </td>
-            <td class="type-cell">
-              <span class="badge badge-formula">&#402; Formula</span>
-            </td>
           </tr>
 
           <!-- ── SECTION: Total Pension ── -->
           <tr class="section-row">
-            <td colspan="4">Total Pension</td>
+            <td colspan="3">Total Pension</td>
           </tr>
 
           <!-- 12 Total Pension including DR -->
@@ -1492,36 +1289,37 @@
             <td>
               <div class="part-title">Total Pension including DR after Retirement</div>
               <div class="part-hint">
-                Row 11 Ordinary + (DA Rate &times; Row 11 Higher)<br />
-                <strong>= (Basic Pay &times; 30%) + (DA% &times; Basic Pay &times; 50%)</strong>
+                Ordinary Rate + (DA Rate &times; Higher Rate)<br />
+                <strong>Higher Rate = Basic Pay &times; 50%</strong>
               </div>
             </td>
             <td>
               <div class="family-outputs">
                 <div class="family-output-item">
-                  <span class="family-label">Family Pension — Ordinary (30%)</span>
+                  <span class="family-label">Ordinary Rate (Basic Pay &times; 30%)</span>
                   <div class="formula-cell empty" id="out_dr_ordinary">Awaiting Basic Pay &amp; DA Rate</div>
                 </div>
                 <div class="family-output-item">
-                  <span class="family-label">DR on Higher Rate (DA% &times; 50%)</span>
+                  <span class="family-label">Higher Rate = Basic Pay &times; 50%</span>
+                  <div class="formula-cell empty" id="out_dr_higher_base">Awaiting Basic Pay (Row 06)</div>
+                </div>
+                <div class="family-output-item">
+                  <span class="family-label">DR on Higher Rate (DA Rate &times; Higher Rate)</span>
                   <div class="formula-cell empty" id="out_dr_on_higher">Awaiting Basic Pay &amp; DA Rate</div>
                 </div>
                 <div class="family-output-item">
-                  <span class="family-label" style="color:var(--navy);font-size:.75rem;">&#9654; Total Pension with
-                    DR</span>
+                  <span class="family-label" style="color:var(--navy);font-size:.74rem;font-weight:700;">&#9654; Total
+                    Pension with DR</span>
                   <div class="formula-cell empty" id="out_total_pension_dr" style="font-size:.92rem;">Awaiting Basic Pay
                     &amp; DA Rate</div>
                 </div>
               </div>
             </td>
-            <td class="type-cell">
-              <span class="badge badge-formula">&#402; Formula</span>
-            </td>
           </tr>
 
           <!-- ── SECTION: Gratuity & Commutation ── -->
           <tr class="section-row">
-            <td colspan="4">Gratuity &amp; Commutation</td>
+            <td colspan="3">Gratuity &amp; Commutation</td>
           </tr>
 
           <!-- 13 Retirement Gratuity -->
@@ -1539,9 +1337,6 @@
                 Awaiting Dates, Basic Pay &amp; DA Rate
               </div>
             </td>
-            <td class="type-cell">
-              <span class="badge badge-formula">&#402; Formula</span>
-            </td>
           </tr>
 
           <!-- 14 Commutation Table Applicable -->
@@ -1556,9 +1351,7 @@
                 <input type="number" id="commutation_factor" placeholder="e.g. 8.194 or 8.287" step="0.001" min="0"
                   max="15" oninput="onFieldChange()" />
               </div>
-            </td>
-            <td class="type-cell">
-              <span class="badge badge-manual">&#9998; Manual</span>
+              <div class="print-val" id="print_commutation_factor">—</div>
             </td>
           </tr>
 
@@ -1577,14 +1370,11 @@
                 Awaiting Basic Pay &amp; Commutation Factor
               </div>
             </td>
-            <td class="type-cell">
-              <span class="badge badge-formula">&#402; Formula</span>
-            </td>
           </tr>
 
           <!-- ── SECTION: Leave Encashment Details ── -->
           <tr class="section-row">
-            <td colspan="4">Leave Encashment Details</td>
+            <td colspan="3">Leave Encashment Details</td>
           </tr>
 
           <!-- 16 Total number of days of EL at credit -->
@@ -1600,9 +1390,7 @@
                   oninput="onFieldChange()" />
                 <span class="field-suffix">days</span>
               </div>
-            </td>
-            <td class="type-cell">
-              <span class="badge badge-manual">&#9998; Manual</span>
+              <div class="print-val" id="print_el_days">—</div>
             </td>
           </tr>
 
@@ -1619,9 +1407,7 @@
                   oninput="onFieldChange()" />
                 <span class="field-suffix">days</span>
               </div>
-            </td>
-            <td class="type-cell">
-              <span class="badge badge-manual">&#9998; Manual</span>
+              <div class="print-val" id="print_hpl_days">—</div>
             </td>
           </tr>
 
@@ -1640,34 +1426,33 @@
                 Awaiting Basic Pay, DA Rate &amp; EL Days
               </div>
             </td>
-            <td class="type-cell">
-              <span class="badge badge-formula">&#402; Formula</span>
-            </td>
           </tr>
 
         </tbody>
       </table>
 
-      <!-- Action Bar -->
+      <!-- Action Bar (Reset & Print / Export) -->
       <div class="action-bar">
-        <button class="btn btn-ghost" onclick="resetForm()">
+        <button class="btn btn-ghost" onclick="resetForm()" title="Clear form inputs">
           <svg viewBox="0 0 24 24">
             <polyline points="1 4 1 10 7 10" />
             <path d="M3.51 15a9 9 0 1 0 .49-4.54" />
           </svg>
-          Reset
+          Reset Form
         </button>
-        <button class="btn btn-print" onclick="window.print()">
+
+        <button class="btn btn-print" onclick="exportPDF()" title="Export &amp; Download PDF with Pensioner Name">
           <svg viewBox="0 0 24 24">
-            <polyline points="6 9 6 2 18 2 18 9" />
-            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
-            <rect x="6" y="14" width="12" height="8" />
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
           </svg>
-          Print / Export
+          Export PDF
         </button>
       </div>
 
     </div><!-- /card -->
+
   </div><!-- /page-body -->
 
   <div class="page-footer">
@@ -1682,77 +1467,40 @@
     <span id="toast-msg"></span>
   </div>
 
-  <!-- ══════════════ SCRIPTS ══════════════ -->
+  <!-- ══════════════ JAVASCRIPT ══════════════ -->
   <script>
     /* ──────────────────────────────────────────
-       FLATPICKR INIT — date pickers
-       All dates stored as JS Date objects in
-       the global vars below.
+       DATE PICKER INTERACTION (NATIVE BROWSER ENGINE)
     ──────────────────────────────────────────── */
-    let pickedDOB = null;
-    let pickedDOJ = null;
-    let pickedDOR = null;
-    let fpDOB, fpDOJ, fpDOR;
-
-    function initPickers() {
-      if (typeof flatpickr === 'undefined') {
-        console.warn('flatpickr library is not loaded');
-        return;
+    function tryOpenPicker(el) {
+      if (el && typeof el.showPicker === 'function') {
+        try {
+          el.showPicker();
+        } catch (e) {
+          // If browser restricts or picker is already open, ignore
+        }
       }
-
-      function makeFPOpts(onPickFn) {
-        return {
-          dateFormat: 'd M Y',
-          allowInput: true,
-          clickOpens: true,
-          disableMobile: true,
-          animate: true,
-          monthSelectorType: 'dropdown',
-          onChange: function (sel, dateStr, instance) {
-            const picked = sel[0] || null;
-            onPickFn(picked);
-            const inp = instance.input;
-            if (picked) {
-              inp.classList.add('valid');
-            } else {
-              inp.classList.remove('valid');
-            }
-            onFieldChange();
-          },
-          onReady: function (sel, dateStr, instance) {
-            instance.input.style.color = 'var(--gray-900)';
-          }
-        };
-      }
-
-      fpDOB = flatpickr('#dob', {
-        ...makeFPOpts(d => { pickedDOB = d; }),
-        maxDate: 'today',
-      });
-
-      fpDOJ = flatpickr('#doj', {
-        ...makeFPOpts(d => { pickedDOJ = d; }),
-      });
-
-      fpDOR = flatpickr('#dor', {
-        ...makeFPOpts(d => { pickedDOR = d; }),
-      });
     }
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initPickers);
-    } else {
-      initPickers();
+    function parseDateInput(id) {
+      const el = document.getElementById(id);
+      if (!el || !el.value) return null;
+      const parts = el.value.split('-');
+      if (parts.length !== 3) return null;
+      const y = parseInt(parts[0], 10);
+      const m = parseInt(parts[1], 10) - 1;
+      const d = parseInt(parts[2], 10);
+      if (isNaN(y) || isNaN(m) || isNaN(d)) return null;
+      return new Date(y, m, d);
     }
 
     /* ──────────────────────────────────────────
-       UTILITY
+       UTILITY & FORMATTING
     ──────────────────────────────────────────── */
     function fmtRs(n) {
       return 'Rs.\u2009' + Math.round(n).toLocaleString('en-IN') + '/-';
     }
 
-    /* relativedelta-style diff (years / months / days) */
     function dateDiff(from, to) {
       if (!from || !to || to <= from) return null;
       let years = to.getFullYear() - from.getFullYear();
@@ -1763,44 +1511,61 @@
         const prev = new Date(to.getFullYear(), to.getMonth(), 0);
         days += prev.getDate();
       }
-      if (months < 0) { years--; months += 12; }
+      if (months < 0) {
+        years--;
+        months += 12;
+      }
       return { years, months, days };
     }
 
     /* ──────────────────────────────────────────
-       OUTPUT HELPERS
+       OUTPUT STATE HELPERS
     ──────────────────────────────────────────── */
     function setFilled(id, text) {
       const el = document.getElementById(id);
-      el.textContent = text;
-      el.className = 'formula-cell filled';
+      if (el) {
+        el.textContent = text;
+        el.className = 'formula-cell filled';
+      }
     }
+
     function setEmpty(id, text) {
       const el = document.getElementById(id);
-      el.textContent = text;
-      el.className = 'formula-cell empty';
+      if (el) {
+        el.textContent = text;
+        el.className = 'formula-cell empty';
+      }
     }
+
     function setPartial(id, text) {
       const el = document.getElementById(id);
-      el.textContent = text;
-      el.className = 'formula-cell partial';
+      if (el) {
+        el.textContent = text;
+        el.className = 'formula-cell partial';
+      }
     }
-    function markInput(id, state) {
+
+    function markInput(id, cls) {
       const el = document.getElementById(id);
-      el.classList.remove('valid', 'err');
-      if (state) el.classList.add(state);
+      if (el) {
+        el.classList.remove('valid', 'err');
+        if (cls) el.classList.add(cls);
+      }
     }
 
     /* ──────────────────────────────────────────
-       PROGRESS
+       PROGRESS BAR
     ──────────────────────────────────────────── */
-    const REQUIRED_FIELDS = ['dob', 'doj', 'dor', 'basic_pay', 'da_rate', 'commutation_factor', 'el_days', 'hpl_days', 'pensioner_name'];
+    const REQUIRED_FIELDS = [
+      'dob', 'doj', 'dor', 'basic_pay', 'da_rate',
+      'commutation_factor', 'el_days', 'hpl_days', 'pensioner_name'
+    ];
 
     function updateProgress() {
       let filled = 0;
-      if (pickedDOB) filled++;
-      if (pickedDOJ) filled++;
-      if (pickedDOR) filled++;
+      if (document.getElementById('dob').value) filled++;
+      if (document.getElementById('doj').value) filled++;
+      if (document.getElementById('dor').value) filled++;
       if (document.getElementById('basic_pay').value.trim()) filled++;
       if (document.getElementById('da_rate').value.trim()) filled++;
       if (document.getElementById('commutation_factor').value.trim()) filled++;
@@ -1811,29 +1576,101 @@
       const pct = Math.round((filled / REQUIRED_FIELDS.length) * 100);
       document.getElementById('progressFill').style.width = pct + '%';
       document.getElementById('progressPct').textContent = pct + '%';
-
-      // keep print-name in sync
-      const name = document.getElementById('pensioner_name').value.trim();
-      document.getElementById('printName').textContent = name;
     }
 
     /* ──────────────────────────────────────────
-       MAIN CALCULATION ENGINE (runs on every input)
+       SYNC VALUES FOR PRINT / PDF EXPORT
+    ──────────────────────────────────────────── */
+    function syncPrintValues() {
+      const name = document.getElementById('pensioner_name').value.trim() || '—';
+      const pName = document.getElementById('print_name');
+      if (pName) pName.textContent = name;
+      const metaName = document.getElementById('printMetaName');
+      if (metaName) metaName.textContent = name;
+
+      const now = new Date();
+      const day = String(now.getDate()).padStart(2, '0');
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const year = now.getFullYear();
+      const metaDate = document.getElementById('printMetaDate');
+      if (metaDate) metaDate.textContent = `${day}-${month}-${year}`;
+
+      function fmtDateVal(id) {
+        const val = document.getElementById(id).value;
+        if (!val) return '—';
+        const parts = val.split('-');
+        if (parts.length === 3) return `${parts[2]}-${parts[1]}-${parts[0]}`;
+        return val;
+      }
+
+      const pDOB = document.getElementById('print_dob');
+      if (pDOB) pDOB.textContent = fmtDateVal('dob');
+
+      const pDOJ = document.getElementById('print_doj');
+      if (pDOJ) pDOJ.textContent = fmtDateVal('doj');
+
+      const pDOR = document.getElementById('print_dor');
+      if (pDOR) pDOR.textContent = fmtDateVal('dor');
+
+      const bp = document.getElementById('basic_pay').value.trim();
+      const pBP = document.getElementById('print_basic_pay');
+      if (pBP) pBP.textContent = bp ? 'Rs.\u2009' + parseInt(bp, 10).toLocaleString('en-IN') + '/-' : '—';
+
+      const da = document.getElementById('da_rate').value.trim();
+      const pDA = document.getElementById('print_da_rate');
+      if (pDA) pDA.textContent = da ? `${da}%` : '—';
+
+      const cf = document.getElementById('commutation_factor').value.trim();
+      const pCF = document.getElementById('print_commutation_factor');
+      if (pCF) pCF.textContent = cf || '—';
+
+      const el = document.getElementById('el_days').value.trim();
+      const pEL = document.getElementById('print_el_days');
+      if (pEL) pEL.textContent = el ? `${el} days` : '—';
+
+      const hpl = document.getElementById('hpl_days').value.trim();
+      const pHPL = document.getElementById('print_hpl_days');
+      if (pHPL) pHPL.textContent = hpl ? `${hpl} days` : '—';
+    }
+
+    window.addEventListener('beforeprint', syncPrintValues);
+
+    /* ──────────────────────────────────────────
+       MAIN CALCULATION ENGINE (LIVE)
     ──────────────────────────────────────────── */
     function onFieldChange() {
       updateProgress();
+      syncPrintValues();
 
-      const bp = parseFloat(document.getElementById('basic_pay').value.trim());
-      const da = document.getElementById('da_rate').value.trim();
+      const pickedDOB = parseDateInput('dob');
+      const pickedDOJ = parseDateInput('doj');
+      const pickedDOR = parseDateInput('dor');
 
-      /* ── Validate Basic Pay ── */
-      if (document.getElementById('basic_pay').value.trim()) {
+      // Update valid styling on date pickers
+      ['dob', 'doj', 'dor'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          if (el.value) el.classList.add('valid');
+          else el.classList.remove('valid');
+        }
+      });
+
+      const bpStr = document.getElementById('basic_pay').value.trim();
+      const bp = parseFloat(bpStr);
+      if (bpStr) {
         markInput('basic_pay', (!isNaN(bp) && bp > 0) ? 'valid' : 'err');
       } else {
         markInput('basic_pay', '');
       }
 
-      /* ── Validate Commutation Factor ── */
+      const daStr = document.getElementById('da_rate').value.trim();
+      const da = parseFloat(daStr);
+      if (daStr) {
+        markInput('da_rate', (!isNaN(da) && da >= 0) ? 'valid' : 'err');
+      } else {
+        markInput('da_rate', '');
+      }
+
       const cfStr = document.getElementById('commutation_factor').value.trim();
       const cf = parseFloat(cfStr);
       if (cfStr) {
@@ -1842,7 +1679,6 @@
         markInput('commutation_factor', '');
       }
 
-      /* ── Validate EL & HPL Days ── */
       const elStr = document.getElementById('el_days').value.trim();
       const elVal = parseFloat(elStr);
       if (elStr) {
@@ -1860,7 +1696,7 @@
       }
 
       /* ══════════════════════════════
-         ROWS 04 & 05 — Service fields
+         ROWS 04 & 05 — Service Fields
       ══════════════════════════════ */
       let calculatedHalfYearly = null;
       if (pickedDOJ && pickedDOR) {
@@ -1869,14 +1705,9 @@
           setPartial('out_half_yearly', 'Retirement date must be after joining date');
         } else {
           const diff = dateDiff(pickedDOJ, pickedDOR);
-          setFilled('out_service',
-            `${diff.years} yrs, ${diff.months} months & ${diff.days} days`);
+          setFilled('out_service', `${diff.years} yrs, ${diff.months} months & ${diff.days} days`);
 
-          // Half yearly periods calculation:
-          // Base: years * 2
-          // If > 9 months: +2 periods
-          // Else if > 3 months: +1 period
-          // Max limit: 66 periods (33 years max qualifying service)
+          // Half-yearly calculation
           let extraPeriods = 0;
           if (diff.months > 9 || (diff.months === 9 && diff.days > 0)) {
             extraPeriods = 2;
@@ -1886,7 +1717,6 @@
 
           const calculatedPeriods = (diff.years * 2) + extraPeriods;
           calculatedHalfYearly = Math.min(calculatedPeriods, 66);
-
           setFilled('out_half_yearly', `${calculatedHalfYearly} periods`);
         }
       } else if (!pickedDOJ && !pickedDOR) {
@@ -1898,9 +1728,10 @@
       }
 
       /* ══════════════════════════════
-         ROWS 08 – 11 — Pension fields
+         ROWS 08 – 11 — Pension Fields
       ══════════════════════════════ */
-      if (!isNaN(bp) && bp > 0) {
+      const hasBP = !isNaN(bp) && bp > 0;
+      if (hasBP) {
         const pensionBefore = bp / 2;
         const commutation = pensionBefore * 0.40;
         const pensionAfter = pensionBefore - commutation;
@@ -1912,15 +1743,9 @@
         setFilled('out_pension_after', fmtRs(pensionAfter));
         setFilled('out_family_ordinary', fmtRs(famOrdinary));
         setFilled('out_family_higher', fmtRs(famHigher));
+        setFilled('out_dr_higher_base', fmtRs(famHigher));
 
-        /* ══════════════════════════════
-           ROW 12 — Total Pension with DR
-           = Family Pension Ordinary + (DA Rate% × Family Pension Higher)
-           = (BP × 30%) + (DA/100 × BP × 50%)
-        ══════════════════════════════ */
-        const daStr = document.getElementById('da_rate').value.trim();
-        const da = parseFloat(daStr);
-
+        /* ── ROW 12 — Total Pension with DR ── */
         if (daStr && !isNaN(da) && da >= 0) {
           const drOnHigher = (da / 100) * famHigher;
           const totalWithDR = famOrdinary + drOnHigher;
@@ -1936,18 +1761,17 @@
           setPartial('out_dr_on_higher', 'Awaiting DA Rate (Row 07)');
           setPartial('out_total_pension_dr', 'Awaiting DA Rate (Row 07)');
         }
-
       } else {
-        const msg = (document.getElementById('basic_pay').value.trim() && (isNaN(bp) || bp <= 0))
+        const msg = (bpStr && (isNaN(bp) || bp <= 0))
           ? 'Enter a valid Basic Pay amount'
           : 'Awaiting Basic Pay (Row 06)';
-        const fn = (document.getElementById('basic_pay').value.trim() && (isNaN(bp) || bp <= 0))
-          ? setPartial : setEmpty;
+        const fn = (bpStr && (isNaN(bp) || bp <= 0)) ? setPartial : setEmpty;
         fn('out_pension_before', msg);
         fn('out_commutation', msg);
         fn('out_pension_after', msg);
         fn('out_family_ordinary', msg);
         fn('out_family_higher', msg);
+        fn('out_dr_higher_base', msg);
         fn('out_total_pension_dr', 'Awaiting Basic Pay (Row 06) & DA Rate (Row 07)');
         fn('out_dr_ordinary', 'Awaiting Basic Pay & DA Rate');
         fn('out_dr_on_higher', 'Awaiting Basic Pay & DA Rate');
@@ -1955,15 +1779,9 @@
 
       /* ══════════════════════════════
          ROW 13 — Retirement Gratuity
-         Formula: (Basic Pay + (Basic Pay * DA%)) * 1/4 * Total Half Yearly Period
-         Max Limit: Rs. 25,00,000/-
       ══════════════════════════════ */
-      const daStr = document.getElementById('da_rate').value.trim();
-      const da = parseFloat(daStr);
-      const hasBP = !isNaN(bp) && bp > 0;
       const hasDA = daStr && !isNaN(da) && da >= 0;
       const hasPeriods = calculatedHalfYearly !== null;
-
       if (hasBP && hasDA && hasPeriods) {
         const emoluments = bp + (bp * (da / 100));
         const rawGratuity = emoluments * 0.25 * calculatedHalfYearly;
@@ -1979,8 +1797,6 @@
 
       /* ══════════════════════════════
          ROW 15 — Commuted Value of Pension (CVP)
-         Formula: Pension Commutation * Commutation Table Applicable * 12
-         = Row 09 * Row 14 * 12
       ══════════════════════════════ */
       const hasCF = cfStr && !isNaN(cf) && cf > 0;
       if (hasBP && hasCF) {
@@ -1997,8 +1813,6 @@
 
       /* ══════════════════════════════
          ROW 18 — EL Encashment
-         Formula: (Basic Pay + (Basic Pay * DA%)) * (1/30) * Total days of EL at credit
-         = Emoluments / 30 * Row 16
       ══════════════════════════════ */
       const hasEL = elStr && !isNaN(elVal) && elVal >= 0;
       if (hasBP && hasDA && hasEL) {
@@ -2015,29 +1829,21 @@
     }
 
     /* ──────────────────────────────────────────
-       RESET
+       RESET FORM
     ──────────────────────────────────────────── */
     function resetForm() {
-      if (fpDOB) fpDOB.clear();
-      if (fpDOJ) fpDOJ.clear();
-      if (fpDOR) fpDOR.clear();
-      pickedDOB = null; pickedDOJ = null; pickedDOR = null;
-
-      // Remove valid class from date inputs
-      ['dob', 'doj', 'dor'].forEach(id => {
-        document.getElementById(id).classList.remove('valid', 'err');
-      });
-
-      ['basic_pay', 'da_rate', 'commutation_factor', 'el_days', 'hpl_days', 'pensioner_name'].forEach(id => {
+      ['dob', 'doj', 'dor', 'basic_pay', 'da_rate', 'commutation_factor', 'el_days', 'hpl_days', 'pensioner_name'].forEach(id => {
         const el = document.getElementById(id);
-        el.value = '';
-        el.classList.remove('valid', 'err');
+        if (el) {
+          el.value = '';
+          el.classList.remove('valid', 'err');
+        }
       });
 
       ['out_service', 'out_half_yearly'].forEach(id =>
         setEmpty(id, 'Awaiting joining & retirement dates'));
       ['out_pension_before', 'out_commutation', 'out_pension_after',
-        'out_family_ordinary', 'out_family_higher'].forEach(id =>
+        'out_family_ordinary', 'out_family_higher', 'out_dr_higher_base'].forEach(id =>
           setEmpty(id, 'Awaiting Basic Pay (Row 06)'));
       ['out_dr_ordinary', 'out_dr_on_higher', 'out_total_pension_dr'].forEach(id =>
         setEmpty(id, 'Awaiting Basic Pay & DA Rate'));
@@ -2046,11 +1852,12 @@
       setEmpty('out_el_encashment', 'Awaiting Basic Pay, DA Rate & EL Days');
 
       updateProgress();
-      toast('Form has been reset.');
+      syncPrintValues();
+      toast('Form has been reset');
     }
 
     /* ──────────────────────────────────────────
-       TOAST
+       TOAST NOTIFICATIONS
     ──────────────────────────────────────────── */
     let _tt;
     function toast(msg, isError = false) {
@@ -2061,7 +1868,133 @@
       _tt = setTimeout(() => el.className = '', 3200);
     }
 
-    /* ── Init ── */
+    /* ──────────────────────────────────────────
+       EXPORT REAL VECTOR PDF WITH DIRECT DOWNLOAD
+       Filename: <Pensioner Name> Pension Details.pdf
+    ──────────────────────────────────────────── */
+    async function exportPDF() {
+      const btn = document.querySelector('.btn-print');
+      const origHtml = btn.innerHTML;
+      btn.innerHTML = `
+        <svg viewBox="0 0 24 24" style="animation: spin 1s linear infinite; width:15px; height:15px;">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="31.4 31.4" />
+        </svg>
+        Generating PDF...`;
+      btn.disabled = true;
+
+      try {
+        const pName = (document.getElementById('pensioner_name').value || '').trim();
+        const now = new Date();
+        const day = String(now.getDate()).padStart(2, '0');
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const year = now.getFullYear();
+        const genDate = `${day}-${month}-${year}`;
+
+        function fmtDateVal(id) {
+          const val = document.getElementById(id).value;
+          if (!val) return '—';
+          const parts = val.split('-');
+          if (parts.length === 3) return `${parts[2]}-${parts[1]}-${parts[0]}`;
+          return val;
+        }
+
+        function getText(id) {
+          const el = document.getElementById(id);
+          if (!el) return '—';
+          const txt = el.textContent.trim();
+          if (!txt || txt.startsWith('Awaiting') || txt.startsWith('Select') || txt.startsWith('Enter')) return '—';
+          return txt;
+        }
+
+        const bp = document.getElementById('basic_pay').value.trim();
+        const bpText = bp ? 'Rs.\u2009' + parseInt(bp, 10).toLocaleString('en-IN') + '/-' : '—';
+
+        const da = document.getElementById('da_rate').value.trim();
+        const daText = da ? `${da}%` : '—';
+
+        const cf = document.getElementById('commutation_factor').value.trim();
+        const elDays = document.getElementById('el_days').value.trim();
+        const hplDays = document.getElementById('hpl_days').value.trim();
+
+        const famOrd = getText('out_family_ordinary');
+        const famHigh = getText('out_family_higher');
+        const famSummary = (famOrd !== '—' && famHigh !== '—')
+          ? `Ordinary (30%): ${famOrd} | Higher (50%): ${famHigh}`
+          : '—';
+
+        const totPension = getText('out_total_pension_dr');
+        const totSummary = (totPension !== '—')
+          ? `Ordinary Rate + (DA% × Higher Rate) | Higher Rate = Basic Pay × 50%`
+          : '—';
+
+        const payload = {
+          pensioner_name: pName,
+          generation_date: genDate,
+          rows: [
+            { is_profile: true, sl: '—', particulars: 'Pensioner Name', val: pName || '—' },
+            { is_section: true, title: 'Personal Details' },
+            { sl: '01', particulars: 'Date of Birth', val: fmtDateVal('dob') },
+            { is_section: true, title: 'Service Details' },
+            { sl: '02', particulars: 'Date of Entry into Service', val: fmtDateVal('doj') },
+            { sl: '03', particulars: 'Date of Retirement', val: fmtDateVal('dor') },
+            { sl: '04', particulars: 'Total Service Rendered', val: getText('out_service') },
+            { sl: '05', particulars: 'Total Half Yearly Period', val: getText('out_half_yearly') },
+            { is_section: true, title: 'Pay Details' },
+            { sl: '06', particulars: 'Basic Pay at Time of Retirement', val: bpText },
+            { sl: '07', particulars: 'DA Rate', val: daText },
+            { is_section: true, title: 'Pension Calculations' },
+            { sl: '08', particulars: 'Pension Admissible (Before Commutation)', val: getText('out_pension_before') },
+            { sl: '09', particulars: 'Pension Commutation (40%)', val: getText('out_commutation') },
+            { sl: '10', particulars: 'Pension Admissible (After Commutation)', val: getText('out_pension_after') },
+            { sl: '11', particulars: `Family Pension Admissible<br/><font color="#4B5563" size="7">${famSummary}</font>`, val: famHigh },
+            { is_section: true, title: 'Total Pension' },
+            { sl: '12', particulars: `Total Pension including DR after Retirement<br/><font color="#4B5563" size="7">${totSummary}</font>`, val: totPension },
+            { is_section: true, title: 'Gratuity & Commutation' },
+            { sl: '13', particulars: 'Retirement Gratuity', val: getText('out_retirement_gratuity') },
+            { sl: '14', particulars: 'Commutation Table Applicable', val: cf || '—' },
+            { sl: '15', particulars: 'Commuted Value of Pension', val: getText('out_commuted_value_pension') },
+            { is_section: true, title: 'Leave Encashment Details' },
+            { sl: '16', particulars: 'Total number of days of EL at credit', val: elDays ? `${elDays} days` : '—' },
+            { sl: '17', particulars: 'Total number of days of HPL at credit', val: hplDays ? `${hplDays} days` : '—' },
+            { sl: '18', particulars: 'EL Encashment', val: getText('out_el_encashment') }
+          ]
+        };
+
+        const resp = await fetch('/export-pdf', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!resp.ok) {
+          throw new Error('PDF export failed');
+        }
+
+        const blob = await resp.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+
+        // Filename: <Pensioner Name> Pension Details.pdf
+        const cleanName = pName.replace(/[\\/*?:"<>|]/g, '').trim();
+        const downloadFilename = cleanName ? `${cleanName} Pension Details.pdf` : 'Pension Details.pdf';
+        a.download = downloadFilename;
+
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        toast(`Downloaded: ${downloadFilename}`);
+      } catch (err) {
+        console.error(err);
+        toast('Failed to download PDF. Please try again.', true);
+      } finally {
+        btn.innerHTML = origHtml;
+        btn.disabled = false;
+      }
+    }
+
+    /* Initial trigger on load */
     onFieldChange();
   </script>
 </body>
