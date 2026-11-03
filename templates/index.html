@@ -500,6 +500,12 @@
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button {
       -webkit-appearance: none;
+      margin: 0;
+    }
+
+    input[type="number"] {
+      -moz-appearance: textfield;
+      appearance: textfield;
     }
 
     input.with-prefix {
@@ -526,6 +532,45 @@
     input.err {
       border-color: #fca5a5;
       background: var(--red-soft);
+    }
+
+    /* ════════════════════════════════
+       LEAVE LIMIT WARNING
+    ════════════════════════════════ */
+    .leave-limit-row td {
+      padding: 8px 16px !important;
+      background: var(--red-soft) !important;
+      border-top: 1.5px solid #fecaca !important;
+      border-bottom: 1.5px solid #fecaca !important;
+    }
+
+    .leave-warning-banner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--red);
+      font-size: .83rem;
+      font-weight: 600;
+    }
+
+    .leave-warning-banner svg {
+      flex-shrink: 0;
+      color: var(--red);
+    }
+
+    .leave-warning-text {
+      color: var(--red);
+      font-size: .74rem;
+      font-weight: 600;
+      margin-top: 5px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .leave-warning-text svg {
+      flex-shrink: 0;
+      color: var(--red);
     }
 
     /* ════════════════════════════════
@@ -574,6 +619,11 @@
       background-color: var(--gray-100);
     }
 
+    .grand-total-row td {
+      background: #f8fafc !important;
+      border-top: 1.5px solid var(--navy-mid) !important;
+    }
+
     /* ════════════════════════════════
        FORMULA CELLS (Output)
     ════════════════════════════════ */
@@ -594,25 +644,42 @@
     .formula-cell.empty {
       background: var(--gray-50);
       border-color: var(--gray-200);
-      color: var(--gray-400);
-      font-size: .78rem;
-      font-family: 'Inter', sans-serif;
-      font-style: italic;
+      color: var(--gray-400) !important;
+      font-size: .73rem !important;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+      font-weight: 400 !important;
+      font-style: italic !important;
+      line-height: 1.35 !important;
     }
 
     .formula-cell.partial {
       background: var(--amber-soft);
       border-color: var(--amber-border);
-      color: var(--amber);
-      font-size: .78rem;
-      font-family: 'Inter', sans-serif;
+      color: var(--amber) !important;
+      font-size: .73rem !important;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+      font-weight: 400 !important;
+      font-style: normal !important;
+      line-height: 1.35 !important;
     }
 
     .formula-cell.filled {
       background: var(--green-soft);
       border-color: var(--green-border);
       color: var(--green);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .88rem;
       font-weight: 600;
+      font-style: normal;
+    }
+
+    /* Highlight total computed outputs when filled */
+    #out_total_pension_dr.filled,
+    #out_total_leave_encashment.filled,
+    #out_total_pensionary_benefits.filled {
+      color: var(--navy);
+      font-weight: 700;
+      font-size: .95rem;
     }
 
     /* Family pension sub-outputs */
@@ -791,6 +858,8 @@
       .card-title-bar,
       .action-bar,
       .page-footer,
+      .leave-limit-row,
+      .leave-warning-text,
       #toast {
         display: none !important;
       }
@@ -1052,7 +1121,7 @@
           <line x1="15" y1="9" x2="15" y2="21" />
         </svg>
         <span>Pensionary Benefits Statement</span>
-        <div class="pill">18 Rows</div>
+        <div class="pill">21 Rows</div>
       </div>
 
       <!-- ══════════════════════════════════
@@ -1310,8 +1379,7 @@
                 <div class="family-output-item">
                   <span class="family-label" style="color:var(--navy);font-size:.74rem;font-weight:700;">&#9654; Total
                     Pension with DR</span>
-                  <div class="formula-cell empty" id="out_total_pension_dr" style="font-size:.92rem;">Awaiting Basic Pay
-                    &amp; DA Rate</div>
+                  <div class="formula-cell empty" id="out_total_pension_dr">Awaiting Basic Pay &amp; DA Rate</div>
                 </div>
               </div>
             </td>
@@ -1408,6 +1476,28 @@
                 <span class="field-suffix">days</span>
               </div>
               <div class="print-val" id="print_hpl_days">—</div>
+              <div id="leave_warning_subtext" class="leave-warning-text" style="display: none;">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                  <line x1="12" y1="9" x2="12" y2="13" />
+                  <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg>
+                <span>Total EL + Total HPL exceeds maximum 300 days limit!</span>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Leave Limit Warning Row -->
+          <tr id="leave_warning_row" class="leave-limit-row" style="display: none;">
+            <td colspan="3">
+              <div class="leave-warning-banner">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                  <line x1="12" y1="9" x2="12" y2="13" />
+                  <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg>
+                <span><strong>Warning:</strong> Total EL + Total HPL (<span id="warn_el_days">0</span> + <span id="warn_hpl_days">0</span> = <strong id="warn_total_leave">0</strong> days) exceeds maximum limit of 300 days!</span>
+              </div>
             </td>
           </tr>
 
@@ -1424,6 +1514,62 @@
             <td>
               <div class="formula-cell empty" id="out_el_encashment">
                 Awaiting Basic Pay, DA Rate &amp; EL Days
+              </div>
+            </td>
+          </tr>
+
+          <!-- 19 HPL Encashment -->
+          <tr>
+            <td class="sl"><span class="sl-num">19</span></td>
+            <td>
+              <div class="part-title">HPL Encashment</div>
+              <div class="part-hint">
+                ((Basic Pay / 2) + ((Basic Pay / 2) &times; DA%)) &times; (1/30) &times; HPL Days<br />
+                <strong>= Half Pay Emoluments &divide; 30 &times; Row 17</strong>
+              </div>
+            </td>
+            <td>
+              <div class="formula-cell empty" id="out_hpl_encashment">
+                Awaiting Basic Pay, DA Rate &amp; HPL Days
+              </div>
+            </td>
+          </tr>
+
+          <!-- 20 Total Leave Encashment -->
+          <tr>
+            <td class="sl"><span class="sl-num">20</span></td>
+            <td>
+              <div class="part-title">Total Leave Encashment</div>
+              <div class="part-hint">
+                EL Encashment + HPL Encashment<br />
+                <strong>= Row 18 + Row 19</strong>
+              </div>
+            </td>
+            <td>
+              <div class="formula-cell empty" id="out_total_leave_encashment">
+                Awaiting EL or HPL Days
+              </div>
+            </td>
+          </tr>
+
+          <!-- ── SECTION: Total Pensionary Benefits ── -->
+          <tr class="section-row">
+            <td colspan="3">Total Pensionary Benefits</td>
+          </tr>
+
+          <!-- 21 Total Pensionary Benefits -->
+          <tr class="grand-total-row">
+            <td class="sl"><span class="sl-num">21</span></td>
+            <td>
+              <div class="part-title" style="font-size:.95rem; font-weight:700; color:var(--navy);">Total Pensionary Benefits</div>
+              <div class="part-hint">
+                Commuted Value of Pension + Total Leave Encashment<br />
+                <strong>= Row 15 + Row 20</strong>
+              </div>
+            </td>
+            <td>
+              <div class="formula-cell empty" id="out_total_pensionary_benefits">
+                Awaiting CVP &amp; Leave Encashment
               </div>
             </td>
           </tr>
@@ -1681,18 +1827,45 @@
 
       const elStr = document.getElementById('el_days').value.trim();
       const elVal = parseFloat(elStr);
+      const isELValid = elStr && !isNaN(elVal) && elVal >= 0;
       if (elStr) {
-        markInput('el_days', (!isNaN(elVal) && elVal >= 0) ? 'valid' : 'err');
+        markInput('el_days', isELValid ? 'valid' : 'err');
       } else {
         markInput('el_days', '');
       }
 
       const hplStr = document.getElementById('hpl_days').value.trim();
       const hplVal = parseFloat(hplStr);
+      const isHPLValid = hplStr && !isNaN(hplVal) && hplVal >= 0;
       if (hplStr) {
-        markInput('hpl_days', (!isNaN(hplVal) && hplVal >= 0) ? 'valid' : 'err');
+        markInput('hpl_days', isHPLValid ? 'valid' : 'err');
       } else {
         markInput('hpl_days', '');
+      }
+
+      /* ── Leave Limit Condition: Total EL + Total HPL <= 300 ── */
+      const numEL = isELValid ? elVal : 0;
+      const numHPL = isHPLValid ? hplVal : 0;
+      const totalLeave = numEL + numHPL;
+      const hasLeaveInput = isELValid || isHPLValid;
+
+      const warnRow = document.getElementById('leave_warning_row');
+      const warnSub = document.getElementById('leave_warning_subtext');
+      const warnEL = document.getElementById('warn_el_days');
+      const warnHPL = document.getElementById('warn_hpl_days');
+      const warnTotal = document.getElementById('warn_total_leave');
+
+      if (hasLeaveInput && totalLeave > 300) {
+        if (warnEL) warnEL.textContent = numEL;
+        if (warnHPL) warnHPL.textContent = numHPL;
+        if (warnTotal) warnTotal.textContent = totalLeave;
+        if (warnRow) warnRow.style.display = '';
+        if (warnSub) warnSub.style.display = 'flex';
+        markInput('el_days', 'err');
+        markInput('hpl_days', 'err');
+      } else {
+        if (warnRow) warnRow.style.display = 'none';
+        if (warnSub) warnSub.style.display = 'none';
       }
 
       /* ══════════════════════════════
@@ -1798,11 +1971,12 @@
       /* ══════════════════════════════
          ROW 15 — Commuted Value of Pension (CVP)
       ══════════════════════════════ */
+      let cvp = null;
       const hasCF = cfStr && !isNaN(cf) && cf > 0;
       if (hasBP && hasCF) {
         const pensionBefore = bp / 2;
         const pensionCommutation = pensionBefore * 0.40;
-        const cvp = Math.round(pensionCommutation * cf * 12);
+        cvp = Math.round(pensionCommutation * cf * 12);
         setFilled('out_commuted_value_pension', fmtRs(cvp));
       } else {
         let missingCvp = [];
@@ -1814,10 +1988,11 @@
       /* ══════════════════════════════
          ROW 18 — EL Encashment
       ══════════════════════════════ */
+      let elAmount = null;
       const hasEL = elStr && !isNaN(elVal) && elVal >= 0;
       if (hasBP && hasDA && hasEL) {
         const emoluments = bp + (bp * (da / 100));
-        const elAmount = Math.round(emoluments * (1 / 30) * elVal);
+        elAmount = Math.round(emoluments * (1 / 30) * elVal);
         setFilled('out_el_encashment', fmtRs(elAmount));
       } else {
         let missingEl = [];
@@ -1825,6 +2000,62 @@
         if (!hasDA) missingEl.push('DA Rate');
         if (!hasEL) missingEl.push('EL Days (Row 16)');
         setEmpty('out_el_encashment', `Awaiting ${missingEl.join(', ')}`);
+      }
+
+      /* ══════════════════════════════
+         ROW 19 — HPL Encashment
+      ══════════════════════════════ */
+      let hplAmount = null;
+      const hasHPL = hplStr && !isNaN(hplVal) && hplVal >= 0;
+      if (hasBP && hasDA && hasHPL) {
+        const halfBP = bp / 2;
+        const hplEmoluments = halfBP + (halfBP * (da / 100));
+        hplAmount = Math.round(hplEmoluments * (1 / 30) * hplVal);
+        setFilled('out_hpl_encashment', fmtRs(hplAmount));
+      } else {
+        let missingHpl = [];
+        if (!hasBP) missingHpl.push('Basic Pay');
+        if (!hasDA) missingHpl.push('DA Rate');
+        if (!hasHPL) missingHpl.push('HPL Days (Row 17)');
+        setEmpty('out_hpl_encashment', `Awaiting ${missingHpl.join(', ')}`);
+      }
+
+      /* ══════════════════════════════
+         ROW 20 — Total Leave Encashment
+      ══════════════════════════════ */
+      let totalLeaveAmt = null;
+      if (elAmount !== null && hplAmount !== null) {
+        totalLeaveAmt = elAmount + hplAmount;
+        setFilled('out_total_leave_encashment', fmtRs(totalLeaveAmt));
+      } else if (elAmount !== null) {
+        totalLeaveAmt = elAmount;
+        setFilled('out_total_leave_encashment', fmtRs(totalLeaveAmt));
+      } else if (hplAmount !== null) {
+        totalLeaveAmt = hplAmount;
+        setFilled('out_total_leave_encashment', fmtRs(totalLeaveAmt));
+      } else {
+        let missingTot = [];
+        if (!hasBP) missingTot.push('Basic Pay');
+        if (!hasDA) missingTot.push('DA Rate');
+        if (!hasEL && !hasHPL) missingTot.push('EL or HPL Days');
+        setEmpty('out_total_leave_encashment', `Awaiting ${missingTot.join(', ')}`);
+      }
+
+      /* ══════════════════════════════
+         ROW 21 — Total Pensionary Benefits
+      ══════════════════════════════ */
+      if (cvp !== null && totalLeaveAmt !== null) {
+        const grandTotal = cvp + totalLeaveAmt;
+        setFilled('out_total_pensionary_benefits', fmtRs(grandTotal));
+      } else if (cvp !== null) {
+        setFilled('out_total_pensionary_benefits', fmtRs(cvp));
+      } else if (totalLeaveAmt !== null) {
+        setFilled('out_total_pensionary_benefits', fmtRs(totalLeaveAmt));
+      } else {
+        let missingGrand = [];
+        if (cvp === null) missingGrand.push('CVP (Row 15)');
+        if (totalLeaveAmt === null) missingGrand.push('Leave Encashment (Row 20)');
+        setEmpty('out_total_pensionary_benefits', `Awaiting ${missingGrand.join(' & ')}`);
       }
     }
 
@@ -1850,6 +2081,14 @@
       setEmpty('out_retirement_gratuity', 'Awaiting Dates, Basic Pay & DA Rate');
       setEmpty('out_commuted_value_pension', 'Awaiting Basic Pay & Commutation Factor');
       setEmpty('out_el_encashment', 'Awaiting Basic Pay, DA Rate & EL Days');
+      setEmpty('out_hpl_encashment', 'Awaiting Basic Pay, DA Rate & HPL Days');
+      setEmpty('out_total_leave_encashment', 'Awaiting EL or HPL Days');
+      setEmpty('out_total_pensionary_benefits', 'Awaiting CVP & Leave Encashment');
+
+      const warnRow = document.getElementById('leave_warning_row');
+      const warnSub = document.getElementById('leave_warning_subtext');
+      if (warnRow) warnRow.style.display = 'none';
+      if (warnSub) warnSub.style.display = 'none';
 
       updateProgress();
       syncPrintValues();
@@ -1956,7 +2195,11 @@
             { is_section: true, title: 'Leave Encashment Details' },
             { sl: '16', particulars: 'Total number of days of EL at credit', val: elDays ? `${elDays} days` : '—' },
             { sl: '17', particulars: 'Total number of days of HPL at credit', val: hplDays ? `${hplDays} days` : '—' },
-            { sl: '18', particulars: 'EL Encashment', val: getText('out_el_encashment') }
+            { sl: '18', particulars: 'EL Encashment', val: getText('out_el_encashment') },
+            { sl: '19', particulars: 'HPL Encashment', val: getText('out_hpl_encashment') },
+            { sl: '20', particulars: 'Total Leave Encashment', val: getText('out_total_leave_encashment') },
+            { is_section: true, title: 'Total Pensionary Benefits' },
+            { sl: '21', particulars: 'Total Pensionary Benefits', val: getText('out_total_pensionary_benefits') }
           ]
         };
 
@@ -1993,6 +2236,34 @@
         btn.disabled = false;
       }
     }
+
+    /* ══════════════════════════════════════════════════════
+       DISABLE MOUSE WHEEL VALUE MODIFICATION ON ALL INPUTS
+       (Requires keyboard entry only; eliminates accidental scroll adjustments)
+    ══════════════════════════════════════════════════════════ */
+    document.querySelectorAll('input').forEach(function (inp) {
+      // Prevent mouse wheel from changing input value
+      inp.addEventListener('wheel', function (e) {
+        e.preventDefault();
+        this.blur();
+      }, { passive: false });
+
+      // Prevent ArrowUp & ArrowDown from incrementing/decrementing numbers
+      if (inp.type === 'number') {
+        inp.addEventListener('keydown', function (e) {
+          if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+            e.preventDefault();
+          }
+        });
+      }
+    });
+
+    // Window-level listener: blurs any active input on wheel scroll
+    window.addEventListener('wheel', function () {
+      if (document.activeElement && document.activeElement.tagName === 'INPUT') {
+        document.activeElement.blur();
+      }
+    }, { passive: true });
 
     /* Initial trigger on load */
     onFieldChange();

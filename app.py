@@ -30,7 +30,7 @@ def login_required(f):
 
 def parse_date(date_str: str):
     """Parse date from various string formats."""
-    for fmt in ("%d.%m.%Y", "%d/%m/%Y", "%Y-%m-%d"):
+    for fmt in ("%d.%m.%Y", "%d/%m/%Y", "%Y-%m-%d", "%d-%m-%Y"):
         try:
             return datetime.strptime(date_str.strip(), fmt).date()
         except ValueError:
@@ -169,12 +169,12 @@ def generate_pdf_report(payload: dict) -> bytes:
 
     table_styles = [
         ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#0F2545')),
-        ('TOPPADDING', (0, 0), (-1, 0), 4),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 4),
+        ('TOPPADDING', (0, 0), (-1, 0), 3.5),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 3.5),
         ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#D1D5DB')),
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ('TOPPADDING', (0, 1), (-1, -1), 3),
-        ('BOTTOMPADDING', (0, 1), (-1, -1), 3),
+        ('TOPPADDING', (0, 1), (-1, -1), 2.2),
+        ('BOTTOMPADDING', (0, 1), (-1, -1), 2.2),
     ]
 
     current_idx = 1
@@ -183,8 +183,8 @@ def generate_pdf_report(payload: dict) -> bytes:
             table_data.append([Paragraph(r['title'].upper(), sec_style), "", ""])
             table_styles.append(('SPAN', (0, current_idx), (2, current_idx)))
             table_styles.append(('BACKGROUND', (0, current_idx), (2, current_idx), colors.HexColor('#F3F4F6')))
-            table_styles.append(('TOPPADDING', (0, current_idx), (2, current_idx), 3))
-            table_styles.append(('BOTTOMPADDING', (0, current_idx), (2, current_idx), 3))
+            table_styles.append(('TOPPADDING', (0, current_idx), (2, current_idx), 2.2))
+            table_styles.append(('BOTTOMPADDING', (0, current_idx), (2, current_idx), 2.2))
         else:
             sl = r.get("sl", "")
             part = r.get("particulars", "")
@@ -196,6 +196,8 @@ def generate_pdf_report(payload: dict) -> bytes:
             ])
             if r.get("is_profile"):
                 table_styles.append(('BACKGROUND', (0, current_idx), (2, current_idx), colors.HexColor('#F9FAFB')))
+            elif sl == "21":
+                table_styles.append(('BACKGROUND', (0, current_idx), (2, current_idx), colors.HexColor('#F0F4F8')))
         current_idx += 1
 
     content_table = Table(table_data, colWidths=[42, 328, 165])
@@ -303,6 +305,29 @@ def calculate():
         # Formula: (Basic Pay + (Basic Pay * DA%)) * (1/30) * Total days of EL at credit
         el_encashment = round(emoluments * (1.0 / 30.0) * el_days, 2)
 
+        # --- Row 19: HPL Encashment ---
+        # Formula: ((Basic Pay/2) + ((Basic Pay/2) * DA%)) * (1/30) * Total days of HPL at credit
+        half_bp = basic_pay / 2.0
+        hpl_emoluments = half_bp + (half_bp * (da_rate / 100.0))
+        hpl_encashment = round(hpl_emoluments * (1.0 / 30.0) * hpl_days, 2)
+
+        # --- Row 20: Total Leave Encashment ---
+        # Formula: EL Encashment + HPL Encashment (sum of available values)
+        total_leave_encashment = round(el_encashment + hpl_encashment, 2)
+
+        # --- Row 21: Total Pensionary Benefits ---
+        # Formula: Commuted Value of Pension + Total Leave Encashment
+        total_pensionary_benefits = round(commuted_value_pension + total_leave_encashment, 2)
+
+        # Condition: Total EL + Total HPL maximum 300
+        total_leave = el_days + hpl_days
+        leave_exceeds_300 = total_leave > 300
+        leave_warning = (
+            f"Total EL + Total HPL ({total_leave} days) exceeds maximum limit of 300 days!"
+            if leave_exceeds_300
+            else None
+        )
+
         return jsonify(
             {
                 "success": True,
@@ -321,6 +346,12 @@ def calculate():
                 "retirement_gratuity": retirement_gratuity,
                 "commuted_value_pension": commuted_value_pension,
                 "el_encashment": el_encashment,
+                "hpl_encashment": hpl_encashment,
+                "total_leave_encashment": total_leave_encashment,
+                "total_pensionary_benefits": total_pensionary_benefits,
+                "total_leave": total_leave,
+                "leave_exceeds_300": leave_exceeds_300,
+                "leave_warning": leave_warning,
             }
         )
 
