@@ -1744,7 +1744,7 @@
       if (m < 1 || m > 12) return null;
 
       // Day check for month & leap years
-      const daysInMonth = new Date(y, m, 0).getDate();
+      const daysInMonth = new Date(Date.UTC(y, m, 0)).getUTCDate();
       if (d < 1 || d > daysInMonth) return null;
 
       const pad2 = n => String(n).padStart(2, '0');
@@ -1754,7 +1754,7 @@
         day: d,
         month: m,
         year: y,
-        dateObj: new Date(y, m - 1, d),
+        dateObj: new Date(Date.UTC(y, m - 1, d)),
         formattedDisplay: `${pad2(d)}-${pad2(m)}-${pad4(y)}`,
         formattedNative: `${pad4(y)}-${pad2(m)}-${pad2(d)}`
       };
@@ -1856,6 +1856,16 @@
       return parsed ? parsed.dateObj : null;
     }
 
+    // Returns the formatted display string (DD-MM-YYYY) for a date input field,
+    // or '—' if empty/invalid. Defined at top-level so exportPDF() can access it.
+    function fmtDateVal(id) {
+      const el = document.getElementById(id);
+      if (!el || !el.value) return '—';
+      const parsed = parseUserDate(el.value);
+      if (parsed) return parsed.formattedDisplay;
+      return el.value.trim() || '—';
+    }
+
     /* ──────────────────────────────────────────
        UTILITY & FORMATTING
     ──────────────────────────────────────────── */
@@ -1866,10 +1876,12 @@
     function dateDiff(from, to) {
       if (!from || !to || to < from) return null;
 
-      const y1 = from.getFullYear(), m1 = from.getMonth() + 1, d1 = from.getDate();
-      const y2 = to.getFullYear(), m2 = to.getMonth() + 1, d2 = to.getDate();
+      // Use UTC methods to avoid local-timezone day-shift bugs
+      const y1 = from.getUTCFullYear(), m1 = from.getUTCMonth() + 1, d1 = from.getUTCDate();
+      const y2 = to.getUTCFullYear(), m2 = to.getUTCMonth() + 1, d2 = to.getUTCDate();
 
-      const daysInMonth = (year, month) => new Date(year, month, 0).getDate();
+      // daysInMonth using UTC: last day of month `month` (1-indexed) in `year`
+      const daysInMonth = (year, month) => new Date(Date.UTC(year, month, 0)).getUTCDate();
 
       // Case 1: Same year and same month
       if (y1 === y2 && m1 === m2) {
@@ -1986,14 +1998,6 @@
       const year = now.getFullYear();
       const metaDate = document.getElementById('printMetaDate');
       if (metaDate) metaDate.textContent = `${day}-${month}-${year}`;
-
-      function fmtDateVal(id) {
-        const el = document.getElementById(id);
-        if (!el || !el.value) return '—';
-        const parsed = parseUserDate(el.value);
-        if (parsed) return parsed.formattedDisplay;
-        return el.value.trim() || '—';
-      }
 
       const pDOB = document.getElementById('print_dob');
       if (pDOB) pDOB.textContent = fmtDateVal('dob');
@@ -2381,14 +2385,6 @@
         const year = now.getFullYear();
         const genDate = `${day}-${month}-${year}`;
 
-        function fmtDateVal(id) {
-          const val = document.getElementById(id).value;
-          if (!val) return '—';
-          const parts = val.split('-');
-          if (parts.length === 3) return `${parts[2]}-${parts[1]}-${parts[0]}`;
-          return val;
-        }
-
         function getText(id) {
           const el = document.getElementById(id);
           if (!el) return '—';
@@ -2398,10 +2394,10 @@
         }
 
         const bp = document.getElementById('basic_pay').value.trim();
-        const bpText = bp ? 'Rs.\u2009' + parseInt(bp, 10).toLocaleString('en-IN') + '/-' : '—';
+        const bpText = (bp && !isNaN(bp)) ? fmtRs(parseFloat(bp)) : '—';
 
         const da = document.getElementById('da_rate').value.trim();
-        const daText = da ? `${da}%` : '—';
+        const daText = (da && !isNaN(da)) ? `${da}%` : '—';
 
         const cf = document.getElementById('commutation_factor').value.trim();
         const elDays = document.getElementById('el_days').value.trim();
@@ -2413,10 +2409,13 @@
           ? `Ordinary (30%): ${famOrd} | Higher (50%): ${famHigh}`
           : '—';
 
+        const drOrd = getText('out_dr_ordinary');
+        const drHigh = getText('out_dr_on_higher');
         const totPension = getText('out_total_pension_dr');
-        const totSummary = (totPension !== '—')
-          ? `Ordinary Rate + (DA% × Higher Rate) | Higher Rate = Basic Pay × 50%`
-          : '—';
+        let totSummary = 'Ordinary Rate + (DA% × Higher Rate) | Higher Rate = Basic Pay × 50%';
+        if (totPension !== '—' && drOrd !== '—' && drHigh !== '—') {
+          totSummary = `Ordinary: ${drOrd} + DR on Higher Rate: ${drHigh}`;
+        }
 
         const payload = {
           pensioner_name: pName,

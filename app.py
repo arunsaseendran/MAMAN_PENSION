@@ -125,134 +125,242 @@ def get_pdf_filename(pensioner_name: str) -> str:
 
 
 def generate_pdf_report(payload: dict) -> bytes:
+    """
+    Generate a well-formatted, readable single-page A4 PDF report.
+    Uses clear fonts, alternating row shading, section headers with navy accents,
+    a full-width header banner, meta bar, and a signature footer.
+    All 21 rows + 7 sections fit on one A4 page.
+    """
+    from reportlab.lib.units import mm
+    from reportlab.platypus import HRFlowable
+
     buffer = io.BytesIO()
+    PAGE_W, PAGE_H = A4   # 595 x 842 pt
+
+    L_MARGIN = R_MARGIN = 15 * mm   # ~42.5 pt
+    T_MARGIN = 14 * mm
+    B_MARGIN = 14 * mm
+
     doc = SimpleDocTemplate(
         buffer,
         pagesize=A4,
-        leftMargin=30,
-        rightMargin=30,
-        topMargin=26,
-        bottomMargin=26
+        leftMargin=L_MARGIN,
+        rightMargin=R_MARGIN,
+        topMargin=T_MARGIN,
+        bottomMargin=B_MARGIN,
     )
 
-    styles = getSampleStyleSheet()
+    CW = PAGE_W - L_MARGIN - R_MARGIN   # ~510 pt usable width
 
+    # ── colour palette ────────────────────────────────────────
+    NAVY        = colors.HexColor('#0F2545')
+    NAVY_MID    = colors.HexColor('#1E3A5F')
+    NAVY_LIGHT  = colors.HexColor('#2B547E')
+    SECTION_BG  = colors.HexColor('#EEF2F7')
+    ROW_ALT     = colors.HexColor('#F8FAFC')
+    GRID_COLOR  = colors.HexColor('#CBD5E1')
+    VAL_COLOR   = colors.HexColor('#0F2545')
+    GRAND_BG    = colors.HexColor('#E8F0FE')
+    PROFILE_BG  = colors.HexColor('#F0F4FF')
+    WHITE       = colors.white
+    GRAY        = colors.HexColor('#6B7280')
+    DARK        = colors.HexColor('#1F2937')
+    BLUE_ACCENT = colors.HexColor('#1A56DB')
+
+    # ── typography ────────────────────────────────────────────
     title_style = ParagraphStyle(
-        'DocTitle',
-        parent=styles['Normal'],
-        fontName='Helvetica-Bold',
-        fontSize=15,
-        leading=18,
-        alignment=TA_CENTER,
-        textColor=colors.HexColor('#0F2545')
+        'Title', fontName='Helvetica-Bold', fontSize=15, leading=18,
+        alignment=TA_CENTER, textColor=WHITE,
     )
-
     subtitle_style = ParagraphStyle(
-        'DocSubtitle',
-        parent=styles['Normal'],
-        fontName='Helvetica',
-        fontSize=8.5,
-        leading=11,
-        alignment=TA_CENTER,
-        textColor=colors.HexColor('#4B5563')
+        'Subtitle', fontName='Helvetica', fontSize=8.5, leading=11,
+        alignment=TA_CENTER, textColor=colors.HexColor('#BFD4F0'),
     )
-
-    meta_left = ParagraphStyle(
-        'MetaLeft',
-        parent=styles['Normal'],
-        fontName='Helvetica-Bold',
-        fontSize=9,
-        leading=12,
-        textColor=colors.HexColor('#111827')
+    meta_label = ParagraphStyle(
+        'MetaLabel', fontName='Helvetica-Bold', fontSize=9, leading=12,
+        textColor=DARK,
     )
-
-    meta_right = ParagraphStyle(
-        'MetaRight',
-        parent=styles['Normal'],
-        fontName='Helvetica',
-        fontSize=9,
-        leading=12,
-        alignment=TA_RIGHT,
-        textColor=colors.HexColor('#374151')
+    meta_label_right = ParagraphStyle(
+        'MetaLabelR', fontName='Helvetica-Bold', fontSize=9, leading=12,
+        alignment=TA_RIGHT, textColor=DARK,
     )
+    th_sl   = ParagraphStyle('TH_SL',   fontName='Helvetica-Bold', fontSize=8.5, leading=11,
+                             alignment=TA_CENTER, textColor=WHITE)
+    th_part = ParagraphStyle('TH_PART', fontName='Helvetica-Bold', fontSize=8.5, leading=11,
+                             textColor=WHITE)
+    th_val  = ParagraphStyle('TH_VAL',  fontName='Helvetica-Bold', fontSize=8.5, leading=11,
+                             alignment=TA_RIGHT, textColor=WHITE)
+    td_sl   = ParagraphStyle('TD_SL',   fontName='Helvetica-Bold', fontSize=8.5, leading=11,
+                             alignment=TA_CENTER, textColor=GRAY)
+    td_part = ParagraphStyle('TD_PART', fontName='Helvetica-Bold', fontSize=9, leading=12,
+                             textColor=DARK)
+    td_val  = ParagraphStyle('TD_VAL',  fontName='Helvetica-Bold', fontSize=9, leading=12,
+                             alignment=TA_RIGHT, textColor=VAL_COLOR)
+    sec_style = ParagraphStyle('SEC', fontName='Helvetica-Bold', fontSize=8, leading=10,
+                               textColor=NAVY, leftIndent=5)
+    grand_part = ParagraphStyle('GRAND_PART', fontName='Helvetica-Bold', fontSize=10,
+                                leading=13, textColor=NAVY)
+    grand_val  = ParagraphStyle('GRAND_VAL',  fontName='Helvetica-Bold', fontSize=10,
+                                leading=13, alignment=TA_RIGHT, textColor=BLUE_ACCENT)
+    sig_label   = ParagraphStyle('SIG_LABEL',  fontName='Helvetica-Bold', fontSize=7.5,
+                                 leading=10, alignment=TA_CENTER, textColor=DARK)
+    sig_role    = ParagraphStyle('SIG_ROLE',   fontName='Helvetica',      fontSize=7,
+                                 leading=9,  alignment=TA_CENTER, textColor=GRAY)
+    footer_note = ParagraphStyle('FOOTER',     fontName='Helvetica',      fontSize=7,
+                                 leading=9,  alignment=TA_CENTER,
+                                 textColor=colors.HexColor('#9CA3AF'))
 
-    th_sl = ParagraphStyle('TH_SL', fontName='Helvetica-Bold', fontSize=8, leading=10, alignment=TA_CENTER, textColor=colors.white)
-    th_part = ParagraphStyle('TH_PART', fontName='Helvetica-Bold', fontSize=8, leading=10, textColor=colors.white)
-    th_val = ParagraphStyle('TH_VAL', fontName='Helvetica-Bold', fontSize=8, leading=10, alignment=TA_RIGHT, textColor=colors.white)
-
-    td_sl = ParagraphStyle('TD_SL', fontName='Helvetica-Bold', fontSize=8, leading=10, alignment=TA_CENTER, textColor=colors.HexColor('#374151'))
-    td_part = ParagraphStyle('TD_PART', fontName='Helvetica-Bold', fontSize=8, leading=10.5, textColor=colors.HexColor('#111827'))
-    td_val = ParagraphStyle('TD_VAL', fontName='Helvetica-Bold', fontSize=8, leading=10.5, alignment=TA_RIGHT, textColor=colors.black)
-
-    sec_style = ParagraphStyle('SEC', fontName='Helvetica-Bold', fontSize=7.5, leading=9.5, textColor=colors.HexColor('#0F2545'))
+    COL_SL   = 28
+    COL_VAL  = 148
+    COL_PART = CW - COL_SL - COL_VAL
 
     story = []
 
-    # Title & Subtitle
-    story.append(Paragraph("PENSIONARY BENEFITS STATEMENT", title_style))
-    story.append(Spacer(1, 2))
-    story.append(Paragraph("Government Pension & Retirement Benefit Computation System", subtitle_style))
-    story.append(Spacer(1, 8))
+    # ── HEADER BANNER ─────────────────────────────────────────
+    banner_data = [
+        [Paragraph("PENSIONARY BENEFITS STATEMENT", title_style)],
+        [Paragraph("Government Pension &amp; Retirement Benefit Computation System", subtitle_style)],
+    ]
+    banner = Table(banner_data, colWidths=[CW])
+    banner.setStyle(TableStyle([
+        ('BACKGROUND',    (0, 0), (-1, -1), NAVY),
+        ('TOPPADDING',    (0, 0), (0, 0),   10),
+        ('BOTTOMPADDING', (0, 0), (0, 0),   1),
+        ('TOPPADDING',    (0, 1), (0, 1),   0),
+        ('BOTTOMPADDING', (0, 1), (0, 1),   8),
+        ('LEFTPADDING',   (0, 0), (-1, -1), 8),
+        ('RIGHTPADDING',  (0, 0), (-1, -1), 8),
+    ]))
+    story.append(banner)
+    story.append(Spacer(1, 7))
 
-    # Meta Table
-    pensioner_name = payload.get("pensioner_name", "").strip() or "—"
+    # ── META BAR ─────────────────────────────────────────────
+    pensioner_name  = payload.get("pensioner_name", "").strip() or "—"
     generation_date = payload.get("generation_date", "").strip() or datetime.now().strftime("%d-%m-%Y")
 
-    meta_table = Table([
-        [Paragraph(f"<b>Pensioner Name:</b> {pensioner_name}", meta_left),
-         Paragraph(f"<b>Date of Generation:</b> {generation_date}", meta_right)]
-    ], colWidths=[335, 200])
-
+    meta_table = Table([[
+        Paragraph(f"<b>Pensioner Name:</b>  {pensioner_name}", meta_label),
+        Paragraph(f"<b>Date of Generation:</b>  {generation_date}", meta_label_right),
+    ]], colWidths=[CW * 0.6, CW * 0.4])
     meta_table.setStyle(TableStyle([
-        ('LINEBELOW', (0, 0), (-1, -1), 1.2, colors.HexColor('#0F2545')),
-        ('TOPPADDING', (0, 0), (-1, -1), 0),
+        ('LINEBELOW',     (0, 0), (-1, -1), 1.5, NAVY),
+        ('LINEABOVE',     (0, 0), (-1, -1), 0.5, GRID_COLOR),
+        ('LEFTPADDING',   (0, 0), (-1, -1), 4),
+        ('RIGHTPADDING',  (0, 0), (-1, -1), 4),
+        ('TOPPADDING',    (0, 0), (-1, -1), 5),
         ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
+        ('VALIGN',        (0, 0), (-1, -1), 'MIDDLE'),
     ]))
     story.append(meta_table)
-    story.append(Spacer(1, 8))
+    story.append(Spacer(1, 7))
 
-    # Table Data
+    # ── MAIN TABLE ───────────────────────────────────────────
     rows = payload.get("rows", [])
-    table_data = [
-        [Paragraph("Sl. No.", th_sl), Paragraph("Particulars", th_part), Paragraph("Amount / Date", th_val)]
-    ]
-
+    table_data = [[
+        Paragraph("Sl.", th_sl),
+        Paragraph("Particulars", th_part),
+        Paragraph("Amount / Date", th_val),
+    ]]
     table_styles = [
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#0F2545')),
-        ('TOPPADDING', (0, 0), (-1, 0), 3.5),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 3.5),
-        ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#D1D5DB')),
-        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ('TOPPADDING', (0, 1), (-1, -1), 2.2),
-        ('BOTTOMPADDING', (0, 1), (-1, -1), 2.2),
+        ('BACKGROUND',    (0, 0), (-1, 0), NAVY_MID),
+        ('TOPPADDING',    (0, 0), (-1, 0), 6),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 6),
+        ('LEFTPADDING',   (0, 0), (-1, 0), 5),
+        ('RIGHTPADDING',  (0, 0), (-1, 0), 5),
+        ('GRID',          (0, 0), (-1, -1), 0.4, GRID_COLOR),
+        ('VALIGN',        (0, 0), (-1, -1), 'MIDDLE'),
+        # Default data-row padding
+        ('TOPPADDING',    (0, 1), (-1, -1), 4),
+        ('BOTTOMPADDING', (0, 1), (-1, -1), 4),
+        ('LEFTPADDING',   (0, 1), (-1, -1), 5),
+        ('RIGHTPADDING',  (0, 1), (-1, -1), 5),
     ]
 
     current_idx = 1
-    for r in rows:
+    for i, r in enumerate(rows):
         if r.get("is_section"):
             table_data.append([Paragraph(r['title'].upper(), sec_style), "", ""])
-            table_styles.append(('SPAN', (0, current_idx), (2, current_idx)))
-            table_styles.append(('BACKGROUND', (0, current_idx), (2, current_idx), colors.HexColor('#F3F4F6')))
-            table_styles.append(('TOPPADDING', (0, current_idx), (2, current_idx), 2.2))
-            table_styles.append(('BOTTOMPADDING', (0, current_idx), (2, current_idx), 2.2))
+            table_styles += [
+                ('SPAN',          (0, current_idx), (2, current_idx)),
+                ('BACKGROUND',    (0, current_idx), (2, current_idx), SECTION_BG),
+                ('LINEABOVE',     (0, current_idx), (2, current_idx), 0.8, NAVY_LIGHT),
+                ('TOPPADDING',    (0, current_idx), (2, current_idx), 4),
+                ('BOTTOMPADDING', (0, current_idx), (2, current_idx), 4),
+                ('LEFTPADDING',   (0, current_idx), (2, current_idx), 7),
+            ]
         else:
-            sl = r.get("sl", "")
-            part = r.get("particulars", "")
-            val = r.get("val", "")
+            sl       = r.get("sl", "")
+            val      = r.get("val", "—")
+            part_raw = r.get("particulars", "")
+            is_grand   = (sl == "21")
+            is_profile = r.get("is_profile", False)
+
+            p_style = grand_part if is_grand else td_part
+            v_style = grand_val  if is_grand else td_val
+
             table_data.append([
                 Paragraph(sl, td_sl),
-                Paragraph(part, td_part),
-                Paragraph(val, td_val)
+                Paragraph(part_raw, p_style),
+                Paragraph(val, v_style),
             ])
-            if r.get("is_profile"):
-                table_styles.append(('BACKGROUND', (0, current_idx), (2, current_idx), colors.HexColor('#F9FAFB')))
-            elif sl == "21":
-                table_styles.append(('BACKGROUND', (0, current_idx), (2, current_idx), colors.HexColor('#F0F4F8')))
+
+            if is_profile:
+                table_styles.append(('BACKGROUND', (0, current_idx), (2, current_idx), PROFILE_BG))
+            elif is_grand:
+                table_styles += [
+                    ('BACKGROUND',    (0, current_idx), (2, current_idx), GRAND_BG),
+                    ('LINEABOVE',     (0, current_idx), (2, current_idx), 1.5, NAVY),
+                    ('LINEBELOW',     (0, current_idx), (2, current_idx), 1.5, NAVY),
+                    ('TOPPADDING',    (0, current_idx), (2, current_idx), 7),
+                    ('BOTTOMPADDING', (0, current_idx), (2, current_idx), 7),
+                ]
+            elif i % 2 == 0:
+                table_styles.append(('BACKGROUND', (0, current_idx), (2, current_idx), ROW_ALT))
+
         current_idx += 1
 
-    content_table = Table(table_data, colWidths=[42, 328, 165])
+    content_table = Table(table_data, colWidths=[COL_SL, COL_PART, COL_VAL])
     content_table.setStyle(TableStyle(table_styles))
     story.append(content_table)
+    story.append(Spacer(1, 12))
+
+    # ── SIGNATURE SECTION ────────────────────────────────────
+    def make_sig_cell(title, role, width):
+        data = [
+            [Paragraph("", sig_label)],  # blank line above for signature space
+            [Paragraph(f"<b>{title}</b>", sig_label)],
+            [Paragraph(role, sig_role)],
+        ]
+        t = Table(data, colWidths=[width])
+        t.setStyle(TableStyle([
+            ('LINEABOVE',     (0, 0), (-1, 0), 0.8, GRAY),
+            ('ALIGN',         (0, 0), (-1, -1), 'CENTER'),
+            ('TOPPADDING',    (0, 0), (-1, 0), 14),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 2),
+            ('TOPPADDING',    (0, 1), (-1, -1), 1),
+            ('BOTTOMPADDING', (0, 1), (-1, -1), 1),
+        ]))
+        return t
+
+    sig_w = CW / 3 - 6
+    sig_row = [[
+        make_sig_cell("Prepared By", "Dealing Assistant", sig_w),
+        make_sig_cell("Checked &amp; Verified By", "Section Officer / AAO", sig_w),
+        make_sig_cell("Sanctioning Authority", "Head of Office / Accounts Officer", sig_w),
+    ]]
+    sig_table = Table(sig_row, colWidths=[CW / 3] * 3)
+    sig_table.setStyle(TableStyle([
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ('ALIGN',  (0, 0), (-1, -1), 'CENTER'),
+    ]))
+    story.append(sig_table)
+    story.append(Spacer(1, 8))
+    story.append(HRFlowable(width=CW, thickness=0.5, color=GRID_COLOR))
+    story.append(Spacer(1, 3))
+    story.append(Paragraph(
+        "Official Pensionary Benefits Computation Statement  ·  System Generated Official Document",
+        footer_note
+    ))
 
     doc.build(story)
     buffer.seek(0)
