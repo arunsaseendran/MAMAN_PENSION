@@ -1643,13 +1643,13 @@
             <td>
               <div class="part-title" style="font-size:.95rem; font-weight:700; color:var(--navy);">Total Pensionary Benefits</div>
               <div class="part-hint">
-                Commuted Value of Pension + Total Leave Encashment + Total Pension including DR<br />
-                <strong>= Row 15 + Row 20 + Row 12</strong>
+                Commuted Value of Pension + Total Leave Encashment + Retirement Gratuity<br />
+                <strong>= Row 15 + Row 20 + Row 13</strong>
               </div>
             </td>
             <td>
               <div class="formula-cell empty" id="out_total_pensionary_benefits">
-                Awaiting CVP, Leave Encashment &amp; Pension with DR
+                Awaiting CVP, Leave Encashment &amp; Gratuity
               </div>
             </td>
           </tr>
@@ -1866,46 +1866,48 @@
     function dateDiff(from, to) {
       if (!from || !to || to < from) return null;
 
-      // In government service calculations, both date of entry and date of retirement are inclusive.
-      // Therefore, add 1 day to the retirement date (from forenoon of entry to afternoon of retirement).
-      const toInclusive = new Date(to.getFullYear(), to.getMonth(), to.getDate() + 1);
+      const y1 = from.getFullYear(), m1 = from.getMonth() + 1, d1 = from.getDate();
+      const y2 = to.getFullYear(), m2 = to.getMonth() + 1, d2 = to.getDate();
 
-      // 1. Advance by full years
-      let years = toInclusive.getFullYear() - from.getFullYear();
-      let cur = new Date(from.getFullYear() + years, from.getMonth(), from.getDate());
-      if (cur.getMonth() !== from.getMonth()) {
-        cur = new Date(from.getFullYear() + years, from.getMonth() + 1, 0);
-      }
-      if (cur > toInclusive) {
-        years--;
-        cur = new Date(from.getFullYear() + years, from.getMonth(), from.getDate());
-        if (cur.getMonth() !== from.getMonth()) {
-          cur = new Date(from.getFullYear() + years, from.getMonth() + 1, 0);
+      const daysInMonth = (year, month) => new Date(year, month, 0).getDate();
+
+      // Case 1: Same year and same month
+      if (y1 === y2 && m1 === m2) {
+        const dim = daysInMonth(y1, m1);
+        if (d1 === 1 && d2 === dim) {
+          return { years: 0, months: 1, days: 0 };
         }
+        return { years: 0, months: 0, days: d2 - d1 + 1 };
       }
 
-      // 2. Advance by full months
-      let months = 0;
-      while (true) {
-        const nextYear = cur.getFullYear() + Math.floor((cur.getMonth() + 1) / 12);
-        const nextMonth = (cur.getMonth() + 1) % 12;
-        const daysInNextMonth = new Date(nextYear, nextMonth + 1, 0).getDate();
-        const targetDay = Math.min(from.getDate(), daysInNextMonth);
-        const nextCur = new Date(nextYear, nextMonth, targetDay);
-
-        if (nextCur <= toInclusive) {
-          cur = nextCur;
-          months++;
-        } else {
-          break;
-        }
+      // Case 2: Different months
+      let startDays = 0;
+      let fullStartIdx = y1 * 12 + (m1 - 1);
+      if (d1 > 1) {
+        startDays = daysInMonth(y1, m1) - d1 + 1;
+        fullStartIdx += 1;
       }
 
-      // 3. Remaining days
-      const msPerDay = 1000 * 60 * 60 * 24;
-      const days = Math.round((toInclusive.getTime() - cur.getTime()) / msPerDay);
+      let endDays = 0;
+      let fullEndIdx = y2 * 12 + (m2 - 1);
+      const dim2 = daysInMonth(y2, m2);
+      if (d2 < dim2) {
+        endDays = d2;
+        fullEndIdx -= 1;
+      }
 
-      return { years, months, days };
+      let totalMonths = Math.max(0, fullEndIdx - fullStartIdx + 1);
+      let totalDays = startDays + endDays;
+
+      if (totalDays >= 30) {
+        totalMonths += Math.floor(totalDays / 30);
+        totalDays = totalDays % 30;
+      }
+
+      const years = Math.floor(totalMonths / 12);
+      const months = totalMonths % 12;
+
+      return { years, months, days: totalDays };
     }
 
     /* ──────────────────────────────────────────
@@ -2151,7 +2153,6 @@
       /* ══════════════════════════════
          ROWS 08 – 11 — Pension Fields
       ══════════════════════════════ */
-      let totalPensionDRVal = null;
       const hasBP = !isNaN(bp) && bp > 0;
       if (hasBP) {
         const pensionBefore = bp / 2;
@@ -2171,7 +2172,6 @@
         if (daStr && !isNaN(da) && da >= 0) {
           const drOnHigher = (da / 100) * famHigher;
           const totalWithDR = famOrdinary + drOnHigher;
-          totalPensionDRVal = Math.round(totalWithDR);
           setFilled('out_dr_ordinary', fmtRs(famOrdinary));
           setFilled('out_dr_on_higher', fmtRs(drOnHigher));
           setFilled('out_total_pension_dr', fmtRs(totalWithDR));
@@ -2203,12 +2203,13 @@
       /* ══════════════════════════════
          ROW 13 — Retirement Gratuity
       ══════════════════════════════ */
+      let gratuity = null;
       const hasDA = daStr && !isNaN(da) && da >= 0;
       const hasPeriods = calculatedHalfYearly !== null;
       if (hasBP && hasDA && hasPeriods) {
         const emoluments = bp + (bp * (da / 100));
         const rawGratuity = emoluments * 0.25 * calculatedHalfYearly;
-        const gratuity = Math.min(Math.round(rawGratuity), 2500000);
+        gratuity = Math.min(Math.round(rawGratuity), 2500000);
         setFilled('out_retirement_gratuity', fmtRs(gratuity));
       } else {
         let missing = [];
@@ -2220,13 +2221,15 @@
 
       /* ══════════════════════════════
          ROW 15 — Commuted Value of Pension (CVP)
+         Formula: Pension Commutation * Commutation Table Applicable * 12
+         Rounded up to next higher rupee if any fraction appears (ceil)
       ══════════════════════════════ */
       let cvp = null;
       const hasCF = cfStr && !isNaN(cf) && cf > 0;
       if (hasBP && hasCF) {
         const pensionBefore = bp / 2;
         const pensionCommutation = pensionBefore * 0.40;
-        cvp = Math.round(pensionCommutation * cf * 12);
+        cvp = Math.ceil(pensionCommutation * cf * 12);
         setFilled('out_commuted_value_pension', fmtRs(cvp));
       } else {
         let missingCvp = [];
@@ -2293,13 +2296,14 @@
 
       /* ══════════════════════════════
          ROW 21 — Total Pensionary Benefits
-         Formula: Commuted Value of Pension + Total Leave Encashment + Total Pension including DR
+         Formula: Commuted Value of Pension + Total Leave Encashment + Retirement Gratuity
       ══════════════════════════════ */
-      if (cvp !== null || totalLeaveAmt !== null || totalPensionDRVal !== null) {
-        const grandTotal = (cvp || 0) + (totalLeaveAmt || 0) + (totalPensionDRVal || 0);
+      const availableComponents = [cvp, totalLeaveAmt, gratuity].filter(v => v !== null);
+      if (availableComponents.length > 0) {
+        const grandTotal = availableComponents.reduce((sum, v) => sum + v, 0);
         setFilled('out_total_pensionary_benefits', fmtRs(grandTotal));
       } else {
-        setEmpty('out_total_pensionary_benefits', 'Awaiting CVP, Leave Encashment & Pension with DR');
+        setEmpty('out_total_pensionary_benefits', 'Awaiting CVP, Leave Encashment & Gratuity');
       }
     }
 
@@ -2331,7 +2335,7 @@
       setEmpty('out_el_encashment', 'Awaiting Basic Pay, DA Rate & EL Days');
       setEmpty('out_hpl_encashment', 'Awaiting Basic Pay, DA Rate & HPL Days');
       setEmpty('out_total_leave_encashment', 'Awaiting EL or HPL Days');
-      setEmpty('out_total_pensionary_benefits', 'Awaiting CVP, Leave Encashment & Pension with DR');
+      setEmpty('out_total_pensionary_benefits', 'Awaiting CVP, Leave Encashment & Gratuity');
 
       const warnRow = document.getElementById('leave_warning_row');
       const warnSub = document.getElementById('leave_warning_subtext');

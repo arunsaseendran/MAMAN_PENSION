@@ -1,5 +1,7 @@
 import io
 import re
+import math
+import calendar
 from urllib.parse import quote
 from datetime import date, datetime, timedelta
 from functools import wraps
@@ -51,13 +53,48 @@ def parse_date(date_str: str):
 
 
 def calculate_service(doj: date, dor: date):
-    """Calculate total service between date of joining and date of retirement (both dates inclusive)."""
-    dor_inclusive = dor + timedelta(days=1)
-    delta = relativedelta(dor_inclusive, doj)
-    years = delta.years
-    months = delta.months
-    days = delta.days
-    return years, months, days
+    """
+    Calculate total service between date of joining and date of retirement (both dates inclusive)
+    using exact calendar months and actual days in starting/ending incomplete months.
+    """
+    if dor < doj:
+        return 0, 0, 0
+
+    y1, m1, d1 = doj.year, doj.month, doj.day
+    y2, m2, d2 = dor.year, dor.month, dor.day
+
+    # Case 1: Same year and same month
+    if y1 == y2 and m1 == m2:
+        dim = calendar.monthrange(y1, m1)[1]
+        if d1 == 1 and d2 == dim:
+            return 0, 1, 0
+        return 0, 0, (d2 - d1 + 1)
+
+    # Case 2: Different months
+    start_days = 0
+    full_start_idx = y1 * 12 + (m1 - 1)
+    if d1 > 1:
+        dim1 = calendar.monthrange(y1, m1)[1]
+        start_days = dim1 - d1 + 1
+        full_start_idx += 1
+
+    end_days = 0
+    full_end_idx = y2 * 12 + (m2 - 1)
+    dim2 = calendar.monthrange(y2, m2)[1]
+    if d2 < dim2:
+        end_days = d2
+        full_end_idx -= 1
+
+    total_months = max(0, full_end_idx - full_start_idx + 1)
+    total_days = start_days + end_days
+
+    if total_days >= 30:
+        total_months += total_days // 30
+        total_days = total_days % 30
+
+    years = total_months // 12
+    months = total_months % 12
+    return years, months, total_days
 
 
 def total_half_yearly_periods(years: int, months: int, days: int) -> int:
@@ -312,7 +349,10 @@ def calculate():
 
         # --- Row 15: Commuted Value of Pension (CVP) ---
         # Formula: Pension Commutation * Commutation Table Applicable * 12
-        commuted_value_pension = round(pension_commutation * commutation_factor * 12, 2)
+        # Rounded up to next higher rupee if any fraction appears (ceil)
+        commuted_value_pension = float(
+            math.ceil(pension_commutation * commutation_factor * 12)
+        )
 
         # --- Row 18: EL Encashment ---
         # Formula: (Basic Pay + (Basic Pay * DA%)) * (1/30) * Total days of EL at credit
@@ -329,8 +369,10 @@ def calculate():
         total_leave_encashment = round(el_encashment + hpl_encashment, 2)
 
         # --- Row 21: Total Pensionary Benefits ---
-        # Formula: Commuted Value of Pension + Total Leave Encashment + Total Pension with DR
-        total_pensionary_benefits = round(commuted_value_pension + total_leave_encashment + total_pension_dr, 2)
+        # Formula: Commuted Value of Pension + Total Leave Encashment + Retirement Gratuity
+        total_pensionary_benefits = round(
+            commuted_value_pension + total_leave_encashment + retirement_gratuity, 2
+        )
 
         # Condition: Total EL + Total HPL maximum 300
         total_leave = el_days + hpl_days
