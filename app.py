@@ -1,7 +1,7 @@
 import io
 import re
 from urllib.parse import quote
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from functools import wraps
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session, make_response
 from dateutil.relativedelta import relativedelta
@@ -29,18 +29,31 @@ def login_required(f):
 
 
 def parse_date(date_str: str):
-    """Parse date from various string formats."""
+    """Parse date from various string formats (limiting year <= 9999)."""
+    s = str(date_str).strip()
+    # If date is YYYY-MM-DD or similar and year > 4 digits or > 9999, clamp year to 9999
+    parts_dash = s.split("-")
+    if len(parts_dash) == 3 and parts_dash[0].isdigit() and int(parts_dash[0]) > 9999:
+        s = f"9999-{parts_dash[1]}-{parts_dash[2]}"
+    parts_dot = s.split(".")
+    if len(parts_dot) == 3 and parts_dot[2].isdigit() and int(parts_dot[2]) > 9999:
+        s = f"{parts_dot[0]}.{parts_dot[1]}.9999"
+    parts_slash = s.split("/")
+    if len(parts_slash) == 3 and parts_slash[2].isdigit() and int(parts_slash[2]) > 9999:
+        s = f"{parts_slash[0]}/{parts_slash[1]}/9999"
+
     for fmt in ("%d.%m.%Y", "%d/%m/%Y", "%Y-%m-%d", "%d-%m-%Y"):
         try:
-            return datetime.strptime(date_str.strip(), fmt).date()
+            return datetime.strptime(s, fmt).date()
         except ValueError:
             continue
     raise ValueError(f"Cannot parse date: {date_str}")
 
 
 def calculate_service(doj: date, dor: date):
-    """Calculate total service between date of joining and date of retirement."""
-    delta = relativedelta(dor, doj)
+    """Calculate total service between date of joining and date of retirement (both dates inclusive)."""
+    dor_inclusive = dor + timedelta(days=1)
+    delta = relativedelta(dor_inclusive, doj)
     years = delta.years
     months = delta.months
     days = delta.days
@@ -316,8 +329,8 @@ def calculate():
         total_leave_encashment = round(el_encashment + hpl_encashment, 2)
 
         # --- Row 21: Total Pensionary Benefits ---
-        # Formula: Commuted Value of Pension + Total Leave Encashment
-        total_pensionary_benefits = round(commuted_value_pension + total_leave_encashment, 2)
+        # Formula: Commuted Value of Pension + Total Leave Encashment + Total Pension with DR
+        total_pensionary_benefits = round(commuted_value_pension + total_leave_encashment + total_pension_dr, 2)
 
         # Condition: Total EL + Total HPL maximum 300
         total_leave = el_days + hpl_days

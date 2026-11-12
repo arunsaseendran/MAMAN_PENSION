@@ -574,11 +574,18 @@
     }
 
     /* ════════════════════════════════
-       NATIVE HTML5 DATE INPUT
+       HYBRID DATE INPUT (TYPE OR SELECT)
     ════════════════════════════════ */
-    .native-date-input {
+    .date-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
       width: 100%;
-      padding: 8px 12px;
+    }
+
+    .date-input-wrap .date-text-input {
+      width: 100%;
+      padding: 8px 36px 8px 12px;
       border: 1.5px solid var(--gray-200);
       border-radius: var(--radius-sm);
       font-size: .88rem;
@@ -586,37 +593,68 @@
       color: var(--gray-900);
       background: var(--white);
       outline: none;
-      cursor: pointer;
       transition: var(--transition);
       box-sizing: border-box;
     }
 
-    .native-date-input:hover {
+    .date-input-wrap .date-text-input:hover {
       border-color: var(--gray-300);
     }
 
-    .native-date-input:focus {
+    .date-input-wrap .date-text-input:focus {
       border-color: var(--blue);
       box-shadow: 0 0 0 3px rgba(29, 78, 216, .12);
     }
 
-    .native-date-input.valid {
+    .date-input-wrap .date-text-input.valid {
       border-color: var(--green-border);
       background: var(--green-soft);
       color: var(--green);
     }
 
-    .native-date-input::-webkit-calendar-picker-indicator {
-      cursor: pointer;
-      padding: 4px;
-      border-radius: 4px;
-      opacity: 0.75;
-      transition: opacity .15s ease, background-color .15s ease;
+    .date-input-wrap .date-text-input.err {
+      border-color: #fca5a5;
+      background: var(--red-soft);
+      color: var(--red);
     }
 
-    .native-date-input::-webkit-calendar-picker-indicator:hover {
-      opacity: 1;
-      background-color: var(--gray-100);
+    .date-input-wrap .date-picker-btn {
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      border-radius: 4px;
+      color: var(--gray-400);
+      cursor: pointer;
+      padding: 0;
+      transition: background-color .15s ease, color .15s ease;
+      z-index: 1;
+    }
+
+    .date-input-wrap .date-picker-btn:hover {
+      background: var(--gray-100);
+      color: var(--navy);
+    }
+
+    .date-input-wrap .native-picker-hidden {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+      border: none;
+      padding: 0;
+      margin: 0;
     }
 
     .grand-total-row td {
@@ -1172,8 +1210,22 @@
               <div class="part-hint">Beneficiary Birth Date</div>
             </td>
             <td>
-              <input type="date" id="dob" class="native-date-input" onchange="onFieldChange()" oninput="onFieldChange()"
-                onclick="tryOpenPicker(this)" />
+              <div class="date-input-wrap">
+                <input type="text" id="dob" class="date-text-input" placeholder="dd-mm-yyyy"
+                  maxlength="10" autocomplete="off" spellcheck="false"
+                  oninput="handleDateInput(this, 'dob_native')"
+                  onblur="handleDateBlur(this, 'dob_native')" />
+                <button type="button" class="date-picker-btn" onclick="openCalendarPicker('dob_native')" title="Select date from calendar" tabindex="-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                </button>
+                <input type="date" id="dob_native" class="native-picker-hidden" min="1900-01-01" max="9999-12-31"
+                  onchange="handleNativePickerChange('dob', this)" tabindex="-1" />
+              </div>
               <div class="print-val" id="print_dob">—</div>
             </td>
           </tr>
@@ -1191,8 +1243,22 @@
               <div class="part-hint">Government Joining Date</div>
             </td>
             <td>
-              <input type="date" id="doj" class="native-date-input" onchange="onFieldChange()" oninput="onFieldChange()"
-                onclick="tryOpenPicker(this)" />
+              <div class="date-input-wrap">
+                <input type="text" id="doj" class="date-text-input" placeholder="dd-mm-yyyy"
+                  maxlength="10" autocomplete="off" spellcheck="false"
+                  oninput="handleDateInput(this, 'doj_native')"
+                  onblur="handleDateBlur(this, 'doj_native')" />
+                <button type="button" class="date-picker-btn" onclick="openCalendarPicker('doj_native')" title="Select date from calendar" tabindex="-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                </button>
+                <input type="date" id="doj_native" class="native-picker-hidden" min="1900-01-01" max="9999-12-31"
+                  onchange="handleNativePickerChange('doj', this)" tabindex="-1" />
+              </div>
               <div class="print-val" id="print_doj">—</div>
             </td>
           </tr>
@@ -1205,8 +1271,22 @@
               <div class="part-hint">Scientist: 62 yrs &nbsp;|&nbsp; Others: 60 yrs</div>
             </td>
             <td>
-              <input type="date" id="dor" class="native-date-input" onchange="onFieldChange()" oninput="onFieldChange()"
-                onclick="tryOpenPicker(this)" />
+              <div class="date-input-wrap">
+                <input type="text" id="dor" class="date-text-input" placeholder="dd-mm-yyyy"
+                  maxlength="10" autocomplete="off" spellcheck="false"
+                  oninput="handleDateInput(this, 'dor_native')"
+                  onblur="handleDateBlur(this, 'dor_native')" />
+                <button type="button" class="date-picker-btn" onclick="openCalendarPicker('dor_native')" title="Select date from calendar" tabindex="-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                </button>
+                <input type="date" id="dor_native" class="native-picker-hidden" min="1900-01-01" max="9999-12-31"
+                  onchange="handleNativePickerChange('dor', this)" tabindex="-1" />
+              </div>
               <div class="print-val" id="print_dor">—</div>
             </td>
           </tr>
@@ -1563,13 +1643,13 @@
             <td>
               <div class="part-title" style="font-size:.95rem; font-weight:700; color:var(--navy);">Total Pensionary Benefits</div>
               <div class="part-hint">
-                Commuted Value of Pension + Total Leave Encashment<br />
-                <strong>= Row 15 + Row 20</strong>
+                Commuted Value of Pension + Total Leave Encashment + Total Pension including DR<br />
+                <strong>= Row 15 + Row 20 + Row 12</strong>
               </div>
             </td>
             <td>
               <div class="formula-cell empty" id="out_total_pensionary_benefits">
-                Awaiting CVP &amp; Leave Encashment
+                Awaiting CVP, Leave Encashment &amp; Pension with DR
               </div>
             </td>
           </tr>
@@ -1615,29 +1695,165 @@
 
   <!-- ══════════════ JAVASCRIPT ══════════════ -->
   <script>
-    /* ──────────────────────────────────────────
-       DATE PICKER INTERACTION (NATIVE BROWSER ENGINE)
-    ──────────────────────────────────────────── */
-    function tryOpenPicker(el) {
-      if (el && typeof el.showPicker === 'function') {
-        try {
-          el.showPicker();
-        } catch (e) {
-          // If browser restricts or picker is already open, ignore
+    /* ══════════════════════════════════════════════════════
+       USER-FRIENDLY DATE HANDLERS (TYPE OR SELECT)
+       Supports direct keyboard typing (DD-MM-YYYY, DD/MM/YYYY,
+       or digits) and graphical calendar selection via popup picker.
+    ══════════════════════════════════════════════════════════ */
+    function parseUserDate(str) {
+      if (!str) return null;
+      const s = String(str).trim();
+      if (!s) return null;
+
+      let d = null, m = null, y = null;
+
+      // 1. 8 consecutive digits: DDMMYYYY
+      if (/^\d{8}$/.test(s)) {
+        d = parseInt(s.slice(0, 2), 10);
+        m = parseInt(s.slice(2, 4), 10);
+        y = parseInt(s.slice(4, 8), 10);
+      }
+      // 2. Delimited formats: -, /, .
+      else {
+        const parts = s.split(/[-/.]/);
+        if (parts.length === 3) {
+          const p0 = parseInt(parts[0], 10);
+          const p1 = parseInt(parts[1], 10);
+          const p2 = parseInt(parts[2], 10);
+          if (!isNaN(p0) && !isNaN(p1) && !isNaN(p2)) {
+            // Check if YYYY-MM-DD
+            if (p0 > 1000) {
+              y = p0; m = p1; d = p2;
+            } else {
+              // DD-MM-YYYY
+              d = p0; m = p1; y = p2;
+            }
+          }
         }
       }
+
+      if (d === null || m === null || y === null) return null;
+      if (isNaN(d) || isNaN(m) || isNaN(y)) return null;
+
+      // Year bounds: min 1900, max 9999
+      if (y > 9999) y = 9999;
+      if (y < 1900 && y >= 100) return null;
+      if (y < 100) y = 2000 + y;
+
+      // Month check 1..12
+      if (m < 1 || m > 12) return null;
+
+      // Day check for month & leap years
+      const daysInMonth = new Date(y, m, 0).getDate();
+      if (d < 1 || d > daysInMonth) return null;
+
+      const pad2 = n => String(n).padStart(2, '0');
+      const pad4 = n => String(n).padStart(4, '0');
+
+      return {
+        day: d,
+        month: m,
+        year: y,
+        dateObj: new Date(y, m - 1, d),
+        formattedDisplay: `${pad2(d)}-${pad2(m)}-${pad4(y)}`,
+        formattedNative: `${pad4(y)}-${pad2(m)}-${pad2(d)}`
+      };
+    }
+
+    function handleDateInput(input, nativeId) {
+      let val = input.value;
+      // Allow only digits, hyphens, slashes, dots
+      val = val.replace(/[^\d\-/.]/g, '');
+
+      // Cap digits if user types pure numbers
+      const rawDigits = val.replace(/\D/g, '');
+      if (rawDigits.length > 8 && !val.includes('/') && !val.includes('.')) {
+        val = `${rawDigits.slice(0, 2)}-${rawDigits.slice(2, 4)}-${rawDigits.slice(4, 8)}`;
+      }
+      input.value = val;
+
+      const parsed = parseUserDate(val);
+      const nativeEl = document.getElementById(nativeId);
+      if (parsed) {
+        if (nativeEl) nativeEl.value = parsed.formattedNative;
+        input.classList.add('valid');
+        input.classList.remove('err');
+      } else {
+        if (nativeEl) nativeEl.value = '';
+        input.classList.remove('valid');
+      }
+      onFieldChange();
+    }
+
+    function handleDateBlur(input, nativeId) {
+      const val = input.value.trim();
+      const nativeEl = document.getElementById(nativeId);
+      if (!val) {
+        input.classList.remove('valid', 'err');
+        if (nativeEl) nativeEl.value = '';
+        onFieldChange();
+        return;
+      }
+
+      const parsed = parseUserDate(val);
+      if (parsed) {
+        input.value = parsed.formattedDisplay;
+        if (nativeEl) nativeEl.value = parsed.formattedNative;
+        input.classList.add('valid');
+        input.classList.remove('err');
+      } else {
+        input.classList.remove('valid');
+        input.classList.add('err');
+      }
+      onFieldChange();
+    }
+
+    function handleNativePickerChange(textId, nativeEl) {
+      const textInput = document.getElementById(textId);
+      if (!textInput || !nativeEl) return;
+      const val = nativeEl.value; // YYYY-MM-DD
+      if (val) {
+        const parts = val.split('-');
+        if (parts.length === 3) {
+          let y = parseInt(parts[0], 10);
+          if (y > 9999) y = 9999;
+          textInput.value = `${parts[2]}-${parts[1]}-${String(y).padStart(4, '0')}`;
+          textInput.classList.add('valid');
+          textInput.classList.remove('err');
+        }
+      } else {
+        textInput.value = '';
+        textInput.classList.remove('valid', 'err');
+      }
+      onFieldChange();
+    }
+
+    function openCalendarPicker(nativeId) {
+      const nativeEl = document.getElementById(nativeId);
+      if (!nativeEl) return;
+      const textId = nativeId.replace('_native', '');
+      const textInput = document.getElementById(textId);
+      if (textInput && textInput.value) {
+        const parsed = parseUserDate(textInput.value);
+        if (parsed) {
+          nativeEl.value = parsed.formattedNative;
+        }
+      }
+      if (typeof nativeEl.showPicker === 'function') {
+        try {
+          nativeEl.showPicker();
+          return;
+        } catch (e) {}
+      }
+      nativeEl.focus();
+      nativeEl.click();
     }
 
     function parseDateInput(id) {
       const el = document.getElementById(id);
       if (!el || !el.value) return null;
-      const parts = el.value.split('-');
-      if (parts.length !== 3) return null;
-      const y = parseInt(parts[0], 10);
-      const m = parseInt(parts[1], 10) - 1;
-      const d = parseInt(parts[2], 10);
-      if (isNaN(y) || isNaN(m) || isNaN(d)) return null;
-      return new Date(y, m, d);
+      const parsed = parseUserDate(el.value);
+      return parsed ? parsed.dateObj : null;
     }
 
     /* ──────────────────────────────────────────
@@ -1648,19 +1864,47 @@
     }
 
     function dateDiff(from, to) {
-      if (!from || !to || to <= from) return null;
-      let years = to.getFullYear() - from.getFullYear();
-      let months = to.getMonth() - from.getMonth();
-      let days = to.getDate() - from.getDate();
-      if (days < 0) {
-        months--;
-        const prev = new Date(to.getFullYear(), to.getMonth(), 0);
-        days += prev.getDate();
+      if (!from || !to || to < from) return null;
+
+      // In government service calculations, both date of entry and date of retirement are inclusive.
+      // Therefore, add 1 day to the retirement date (from forenoon of entry to afternoon of retirement).
+      const toInclusive = new Date(to.getFullYear(), to.getMonth(), to.getDate() + 1);
+
+      // 1. Advance by full years
+      let years = toInclusive.getFullYear() - from.getFullYear();
+      let cur = new Date(from.getFullYear() + years, from.getMonth(), from.getDate());
+      if (cur.getMonth() !== from.getMonth()) {
+        cur = new Date(from.getFullYear() + years, from.getMonth() + 1, 0);
       }
-      if (months < 0) {
+      if (cur > toInclusive) {
         years--;
-        months += 12;
+        cur = new Date(from.getFullYear() + years, from.getMonth(), from.getDate());
+        if (cur.getMonth() !== from.getMonth()) {
+          cur = new Date(from.getFullYear() + years, from.getMonth() + 1, 0);
+        }
       }
+
+      // 2. Advance by full months
+      let months = 0;
+      while (true) {
+        const nextYear = cur.getFullYear() + Math.floor((cur.getMonth() + 1) / 12);
+        const nextMonth = (cur.getMonth() + 1) % 12;
+        const daysInNextMonth = new Date(nextYear, nextMonth + 1, 0).getDate();
+        const targetDay = Math.min(from.getDate(), daysInNextMonth);
+        const nextCur = new Date(nextYear, nextMonth, targetDay);
+
+        if (nextCur <= toInclusive) {
+          cur = nextCur;
+          months++;
+        } else {
+          break;
+        }
+      }
+
+      // 3. Remaining days
+      const msPerDay = 1000 * 60 * 60 * 24;
+      const days = Math.round((toInclusive.getTime() - cur.getTime()) / msPerDay);
+
       return { years, months, days };
     }
 
@@ -1742,11 +1986,11 @@
       if (metaDate) metaDate.textContent = `${day}-${month}-${year}`;
 
       function fmtDateVal(id) {
-        const val = document.getElementById(id).value;
-        if (!val) return '—';
-        const parts = val.split('-');
-        if (parts.length === 3) return `${parts[2]}-${parts[1]}-${parts[0]}`;
-        return val;
+        const el = document.getElementById(id);
+        if (!el || !el.value) return '—';
+        const parsed = parseUserDate(el.value);
+        if (parsed) return parsed.formattedDisplay;
+        return el.value.trim() || '—';
       }
 
       const pDOB = document.getElementById('print_dob');
@@ -1796,8 +2040,12 @@
       ['dob', 'doj', 'dor'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
-          if (el.value) el.classList.add('valid');
-          else el.classList.remove('valid');
+          if (parseDateInput(id)) {
+            el.classList.add('valid');
+            el.classList.remove('err');
+          } else if (!el.value) {
+            el.classList.remove('valid', 'err');
+          }
         }
       });
 
@@ -1873,9 +2121,9 @@
       ══════════════════════════════ */
       let calculatedHalfYearly = null;
       if (pickedDOJ && pickedDOR) {
-        if (pickedDOR <= pickedDOJ) {
-          setPartial('out_service', 'Retirement date must be after joining date');
-          setPartial('out_half_yearly', 'Retirement date must be after joining date');
+        if (pickedDOR < pickedDOJ) {
+          setPartial('out_service', 'Retirement date cannot be before joining date');
+          setPartial('out_half_yearly', 'Retirement date cannot be before joining date');
         } else {
           const diff = dateDiff(pickedDOJ, pickedDOR);
           setFilled('out_service', `${diff.years} yrs, ${diff.months} months & ${diff.days} days`);
@@ -1903,6 +2151,7 @@
       /* ══════════════════════════════
          ROWS 08 – 11 — Pension Fields
       ══════════════════════════════ */
+      let totalPensionDRVal = null;
       const hasBP = !isNaN(bp) && bp > 0;
       if (hasBP) {
         const pensionBefore = bp / 2;
@@ -1922,6 +2171,7 @@
         if (daStr && !isNaN(da) && da >= 0) {
           const drOnHigher = (da / 100) * famHigher;
           const totalWithDR = famOrdinary + drOnHigher;
+          totalPensionDRVal = Math.round(totalWithDR);
           setFilled('out_dr_ordinary', fmtRs(famOrdinary));
           setFilled('out_dr_on_higher', fmtRs(drOnHigher));
           setFilled('out_total_pension_dr', fmtRs(totalWithDR));
@@ -2043,19 +2293,13 @@
 
       /* ══════════════════════════════
          ROW 21 — Total Pensionary Benefits
+         Formula: Commuted Value of Pension + Total Leave Encashment + Total Pension including DR
       ══════════════════════════════ */
-      if (cvp !== null && totalLeaveAmt !== null) {
-        const grandTotal = cvp + totalLeaveAmt;
+      if (cvp !== null || totalLeaveAmt !== null || totalPensionDRVal !== null) {
+        const grandTotal = (cvp || 0) + (totalLeaveAmt || 0) + (totalPensionDRVal || 0);
         setFilled('out_total_pensionary_benefits', fmtRs(grandTotal));
-      } else if (cvp !== null) {
-        setFilled('out_total_pensionary_benefits', fmtRs(cvp));
-      } else if (totalLeaveAmt !== null) {
-        setFilled('out_total_pensionary_benefits', fmtRs(totalLeaveAmt));
       } else {
-        let missingGrand = [];
-        if (cvp === null) missingGrand.push('CVP (Row 15)');
-        if (totalLeaveAmt === null) missingGrand.push('Leave Encashment (Row 20)');
-        setEmpty('out_total_pensionary_benefits', `Awaiting ${missingGrand.join(' & ')}`);
+        setEmpty('out_total_pensionary_benefits', 'Awaiting CVP, Leave Encashment & Pension with DR');
       }
     }
 
@@ -2070,6 +2314,10 @@
           el.classList.remove('valid', 'err');
         }
       });
+      ['dob_native', 'doj_native', 'dor_native'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
 
       ['out_service', 'out_half_yearly'].forEach(id =>
         setEmpty(id, 'Awaiting joining & retirement dates'));
@@ -2083,7 +2331,7 @@
       setEmpty('out_el_encashment', 'Awaiting Basic Pay, DA Rate & EL Days');
       setEmpty('out_hpl_encashment', 'Awaiting Basic Pay, DA Rate & HPL Days');
       setEmpty('out_total_leave_encashment', 'Awaiting EL or HPL Days');
-      setEmpty('out_total_pensionary_benefits', 'Awaiting CVP & Leave Encashment');
+      setEmpty('out_total_pensionary_benefits', 'Awaiting CVP, Leave Encashment & Pension with DR');
 
       const warnRow = document.getElementById('leave_warning_row');
       const warnSub = document.getElementById('leave_warning_subtext');
@@ -2236,6 +2484,28 @@
         btn.disabled = false;
       }
     }
+
+    /* ══════════════════════════════════════════════════════
+       DATE FIELD ENTER KEY NAVIGATION
+       (Pressing Enter normalizes format and moves to next field)
+    ══════════════════════════════════════════════════════════ */
+    [
+      ['dob', 'doj'],
+      ['doj', 'dor'],
+      ['dor', 'basic_pay']
+    ].forEach(function ([currId, nextId]) {
+      const curr = document.getElementById(currId);
+      const next = document.getElementById(nextId);
+      if (curr && next) {
+        curr.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            curr.blur();
+            next.focus();
+          }
+        });
+      }
+    });
 
     /* ══════════════════════════════════════════════════════
        DISABLE MOUSE WHEEL VALUE MODIFICATION ON ALL INPUTS
